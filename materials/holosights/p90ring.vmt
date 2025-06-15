@@ -1,0 +1,7 @@
+"UnlitGeneric"
+
+{
+	"$basetexture"	"holosights/p90ring"
+	"$additive"	"1"
+	"$ignorez" "1"
+}

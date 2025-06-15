@@ -1,0 +1,142 @@
+AddCSLuaFile()
+
+SWEP.Spawnable = true
+SWEP.Category = "Arctic VR"
+SWEP.AdminOnly = false
+SWEP.UseHands = false
+
+SWEP.Base = "arcticvr_base"
+
+SWEP.ViewModel = "models/weapons/arcticvr/sniper_awm.mdl"
+SWEP.WorldModel = "models/weapons/w_snip_awp.mdl"
+
+SWEP.ArcticVR = true
+
+SWEP.Primary.ClipSize = 5
+SWEP.Primary.DefaultClip = 1000
+SWEP.Primary.Automatic = false
+SWEP.Primary.Ammo = "ar2"
+
+SWEP.Secondary.ClipSize = -1
+SWEP.Secondary.DefaultClip = -1
+SWEP.Secondary.Automatic = false
+SWEP.Secondary.Ammo = "none"
+
+SWEP.Weight = 5
+SWEP.AutoSwitchTo = false
+SWEP.AutoSwitchFrom = false
+
+SWEP.PrintName = "VR AWM"
+SWEP.Slot = 3
+SWEP.SlotPos = 1
+SWEP.DrawAmmo = false
+SWEP.DrawCrosshair = false
+
+SWEP.DamageMin = 115
+SWEP.DamageMax = 95
+SWEP.MaxRange = 8000
+SWEP.Penetration = 25
+SWEP.MuzzleVelocity = 95000
+SWEP.TracerCol = Color(255, 200, 0)
+SWEP.TracerWidth = 6
+SWEP.Num = 1
+SWEP.Recoil = 4.5
+SWEP.RecoilVertical = 9
+SWEP.RecoilSide = 1
+SWEP.RecoilBalance = Vector(-1, 0, 0.75)
+SWEP.Spread = 1 / 2500
+SWEP.MeanShotsBetweenJams = 0
+SWEP.AmmoType = "ar2"
+
+SWEP.MagType = "awm"
+SWEP.DefaultMagazine = "awm_5"
+
+SWEP.MuzzleEffect = "CS_MuzzleFlash"
+SWEP.CaseEffect = "arcticvr_case_338"
+SWEP.BulletEffect = "arcticvr_bullet_338"
+
+SWEP.FireSound = "weapons/awp/awp1.wav"
+SWEP.DryFireSound = "weapons/clipempty_pistol.wav"
+SWEP.SwitchModeSound = "weapons/ar2/ar2_empty.wav"
+SWEP.SlidePulledSound = ""
+SWEP.BoltUpSound = "weapons/arcticvr/scout_boltup.wav"
+SWEP.SlideBackSound = "weapons/arcticvr/scout_boltback.wav"
+SWEP.SlideForwardSound = "weapons/arcticvr/scout_boltforward.wav"
+SWEP.MagInSound = "weapons/awp/awp_clipin.wav"
+SWEP.MagOutSound = "weapons/awp/awp_clipout.wav"
+SWEP.SpawnMagSound = "foley/eli_hand_pat.wav"
+
+SWEP.NonAutoloading = true
+
+if CLIENT then
+
+g_VR.viewModelInfo = g_VR.viewModelInfo or {}
+
+g_VR.viewModelInfo.arcticvr_awm = {
+    offsetPos = Vector(5.5, 1.25, 2.5), --forward, left, up
+    offsetAng = Angle(0, 0, 0),
+}
+
+SWEP.CanLockBack = false
+SWEP.MagCanDropFree = false
+SWEP.BoltCanAutoRelease = false
+SWEP.SlideNoAutoReciprocate = true
+SWEP.NonReciprocatingChargingHandle = true
+SWEP.CHandleRaiseAtStart = true
+SWEP.TwoHanded = true
+
+SWEP.RTScope = true -- weapon has an RT scope
+SWEP.RTScopeSubmatIndex = 0 -- what is the submaterial index of the scope material?
+SWEP.RTScopeFOV = 10 / 8.5 -- what is the field of view of the scope?
+SWEP.RTScopeRes = 256
+SWEP.RTScopeSurface = Material("effects/avr_rt")
+SWEP.RTScopeOffset = Vector(0, 0, 0)
+SWEP.RTScopeReticle = Material("scopes/milcross.png")
+
+SWEP.StabilityFrames = 30
+
+SWEP.ForegripAngle = Angle(0, -90, -90)
+SWEP.ForegripOffset = Vector(13, -4, 3)
+
+SWEP.ForegripMins = Vector(-4, -5, -7)
+SWEP.ForegripMaxs = Vector(4, 5, 8)
+
+SWEP.SlideMins = Vector(-4, -2, -4)
+SWEP.SlideMaxs = Vector(4, 2, 4)
+
+SWEP.MagazineInsertMins = Vector(-2, -4, -3)
+SWEP.MagazineInsertMaxs = Vector(2, 0, 3)
+
+SWEP.MagazineOffset = Vector(0, 0, 0)
+SWEP.MagazineAngleOffset = Angle(0, 0, 0)
+
+SWEP.SlideDir = Vector(0, 0, -1)
+
+SWEP.CHandleRaiseAmount = 2
+SWEP.CHandleRaisedOffset = {
+    pos = Vector(-0.064904, 2.65323, 0),
+    ang = Angle(0, 64.0068, 0)
+}
+
+SWEP.SlideBlowbackAmount = 3.85
+
+SWEP.BoneIndices = {
+    awm = 0,
+    mag = 1,
+    trigger = 2,
+    slide = 3,
+    bullet = 4,
+    chandle = 5,
+    muzzle = 6,
+    eject = 7,
+    scope = 8,
+    foregrip = 9,
+}
+
+
+
+SWEP.Firemodes = {
+    1,
+}
+
+end

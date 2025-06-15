@@ -1,0 +1,8 @@
+VertexLitGeneric
+{
+	"$baseTexture" "models\weapons\arcticvr\m32mgl\m32mgl_sightpiece"
+	"$envmap" "env_cubemap"
+	"$translucent" "1"
+	"$model" "1"
+	"$ignorez" "1"
+}

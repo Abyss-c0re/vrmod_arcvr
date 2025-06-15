@@ -1,0 +1,7 @@
+"UnlitGeneric"
+
+{
+	"$basetexture"	"holosights/m32mgl"
+	"$additive"	"1"
+	"$ignorez" "1"
+}

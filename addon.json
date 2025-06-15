@@ -1,0 +1,12 @@
+{
+  "title": "[VRMod]ArcVR:All in one",
+  "type": "weapon",
+  "tags": [
+    "fun",
+    "realism"
+  ],
+  "ignore": [
+    ".gitattributes",
+    "security.md"
+  ]
+}

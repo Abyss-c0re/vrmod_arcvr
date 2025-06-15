@@ -1,0 +1,6 @@
+VertexLitGeneric
+{
+	"$basetexture"	"models\weapons\arcticvr\sawnoff\sawnoff"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "models\weapons\arcticvr\sawnoff\sawnoff_s"
+}

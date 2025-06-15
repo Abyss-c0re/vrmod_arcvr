@@ -1,0 +1,14 @@
+ArcticVR = ArcticVR or {}
+
+ArcticVR.RegisterCustomShell("arcticvr_case_762wp", "models/weapons/arcticvr/akcase.mdl", 87, ArcticVR.ShellSoundsTable, 1)
+ArcticVR.RegisterCustomShell("arcticvr_bullet_762wp", "models/weapons/arcticvr/akbullet.mdl", 93, ArcticVR.ShellSoundsTable, 1)
+
+ArcticVR.RegisterCustomShell("arcticvr_case_556g", "models/weapons/arcticvr/galilcase.mdl", 87, ArcticVR.ShellSoundsTable, 1)
+ArcticVR.RegisterCustomShell("arcticvr_bullet_556g", "models/weapons/arcticvr/galilbullet.mdl", 93, ArcticVR.ShellSoundsTable, 1)
+
+ArcticVR.RegisterCustomShell("arcticvr_case_556", "models/weapons/arcticvr/m4case.mdl", 96, ArcticVR.ShellSoundsTable, 1)
+ArcticVR.RegisterCustomShell("arcticvr_bullet_556", "models/weapons/arcticvr/m4bullet.mdl", 101, ArcticVR.ShellSoundsTable, 1)
+
+ArcticVR.RegisterCustomShell("arcticvr_shell_cs_12", "models/weapons/arcticvr/shellfull_cs.mdl", 100, ArcticVR.ShotgunShellSoundsTable, 1, nil, true)
+ArcticVR.RegisterCustomShell("arcticvr_shellspent_cs_12", "models/weapons/arcticvr/shellfired.mdl", 110, ArcticVR.ShotgunShellSoundsTable, 1, nil, true)
+ArcticVR.RegisterCustomShell("arcticvr_shellspent_offset_cs_12", "models/weapons/arcticvr/shellfired_offset.mdl", 110, ArcticVR.ShotgunShellSoundsTable, 1, nil, true)

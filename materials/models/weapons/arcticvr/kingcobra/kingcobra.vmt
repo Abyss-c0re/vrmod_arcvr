@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\weapons\arcticvr\kingcobra\v_357_d"
+	"$envmapmask" "models\weapons\arcticvr\kingcobra\v_357_s"
+	"$envmap" "env_cubemap"
+}
