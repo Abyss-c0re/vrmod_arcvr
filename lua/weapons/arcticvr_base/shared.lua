@@ -101,7 +101,7 @@ SWEP.Category = "Arctic VR" -- edit this if you like
 SWEP.AdminOnly = false
 SWEP.UseHands = true
 
-SWEP.ViewModel = "models/weapons/arcticvr/aniv/pistol_m9.mdl" -- I mean, you probably have to edit these too
+SWEP.ViewModel = "models/weapons/arcticvr/pistol_m9.mdl" -- I mean, you probably have to edit these too
 SWEP.WorldModel = "models/weapons/w_pist_elite_single.mdl"
 
 SWEP.ArcticVR = true -- always keep this true

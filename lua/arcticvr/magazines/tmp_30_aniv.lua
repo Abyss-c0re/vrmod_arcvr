@@ -5,7 +5,7 @@ mag.PrintName = "TMP Magazine"
 mag.Capacity = 30
 mag.MagType = "tmp"
 mag.AmmoType = "pistol"
-mag.Model = "models/weapons/arcticvr/aniv/mag_tmp.mdl"
+mag.Model = "models/weapons/arcticvr/mag_tmp.mdl"
 
 mag.IsBeltBox = false
 

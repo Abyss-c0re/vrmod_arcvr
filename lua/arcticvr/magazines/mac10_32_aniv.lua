@@ -5,7 +5,7 @@ mag.PrintName = "MAC-10 Magazine"
 mag.Capacity = 32
 mag.MagType = "mac10"
 mag.AmmoType = "pistol"
-mag.Model = "models/weapons/arcticvr/aniv/mag_mac10.mdl"
+mag.Model = "models/weapons/arcticvr/mag_mac10.mdl"
 
 mag.IsBeltBox = false
 

@@ -7,7 +7,7 @@ SWEP.UseHands = false
 
 SWEP.Base = "arcticvr_base"
 
-SWEP.ViewModel = "models/weapons/arcticvr/aniv/smg_tmp.mdl"
+SWEP.ViewModel = "models/weapons/arcticvr/smg_tmp.mdl"
 SWEP.WorldModel = "models/weapons/w_smg_tmp.mdl"
 
 

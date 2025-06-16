@@ -13,7 +13,7 @@ ENT.Pose = {
     pos = Vector(),
     ang = Angle()
 }
-ENT.Model = "models/weapons/arcticvr/aniv/mag_m9.mdl"
+ENT.Model = "models/weapons/arcticvr/mag_m9.mdl"
 ENT.MagType = ""
 ENT.BodygroupsShowBullets = {
     [1] = {ind = 1, bg = 1}

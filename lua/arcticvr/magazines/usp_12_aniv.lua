@@ -5,7 +5,7 @@ mag.PrintName = "USP Tactical Magazine"
 mag.Capacity = 12
 mag.MagType = "usp"
 mag.AmmoType = "pistol"
-mag.Model = "models/weapons/arcticvr/aniv/mag_usp.mdl"
+mag.Model = "models/weapons/arcticvr/mag_usp.mdl"
 
 mag.IsBeltBox = false
 

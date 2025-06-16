@@ -13,7 +13,7 @@ ENT.Pose = {
     pos = Vector(0, 0, 0),
     ang = Angle(0, 0, 0)
 }
-ENT.Model = "models/weapons/arcticvr/aniv/mag_m9.mdl"
+ENT.Model = "models/weapons/arcticvr/mag_m9.mdl"
 ENT.AttID = ""
 
 ENT.SoundHard = "weapon.ImpactHard"

@@ -5,7 +5,7 @@ mag.PrintName = "Desert Eagle Magazine"
 mag.Capacity = 7
 mag.MagType = "deagle"
 mag.AmmoType = "357"
-mag.Model = "models/weapons/arcticvr/aniv/mag_deagle.mdl"
+mag.Model = "models/weapons/arcticvr/mag_deagle.mdl"
 
 mag.IsBeltBox = false
 

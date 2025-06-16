@@ -5,7 +5,7 @@ mag.PrintName = "Glock Magazine"
 mag.Capacity = 17
 mag.MagType = "glock"
 mag.AmmoType = "pistol"
-mag.Model = "models/weapons/arcticvr/aniv/mag_glock.mdl"
+mag.Model = "models/weapons/arcticvr/mag_glock.mdl"
 
 mag.IsBeltBox = false
 

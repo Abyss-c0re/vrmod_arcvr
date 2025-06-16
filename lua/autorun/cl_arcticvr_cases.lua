@@ -116,14 +116,14 @@ function ArcticVR.RegisterCustomShell(name, model, pitch, sounds, scale, materia
     effects.Register(eff, name)
 end
 
-ArcticVR.RegisterCustomShell("arcticvr_case_9x19", "models/weapons/arcticvr/aniv/9mmcase.mdl", 105, ArcticVR.ShellSoundsTable, 1)
-ArcticVR.RegisterCustomShell("arcticvr_case_9x19_alt", "models/weapons/arcticvr/aniv/9mmcase_alt.mdl", 105, ArcticVR.ShellSoundsTable, 1)
-ArcticVR.RegisterCustomShell("arcticvr_bullet_9x19", "models/weapons/arcticvr/aniv/9mmbullet.mdl", 110, ArcticVR.ShellSoundsTable, 1)
+ArcticVR.RegisterCustomShell("arcticvr_case_9x19", "models/weapons/arcticvr/9mmcase.mdl", 105, ArcticVR.ShellSoundsTable, 1)
+ArcticVR.RegisterCustomShell("arcticvr_case_9x19_alt", "models/weapons/arcticvr/9mmcase_alt.mdl", 105, ArcticVR.ShellSoundsTable, 1)
+ArcticVR.RegisterCustomShell("arcticvr_bullet_9x19", "models/weapons/arcticvr/9mmbullet.mdl", 110, ArcticVR.ShellSoundsTable, 1)
 
-ArcticVR.RegisterCustomShell("arcticvr_case_50ae", "models/weapons/arcticvr/aniv/50aecase.mdl", 80, ArcticVR.ShellSoundsTable, 1)
-ArcticVR.RegisterCustomShell("arcticvr_bullet_50ae", "models/weapons/arcticvr/aniv/50aebullet.mdl", 90, ArcticVR.ShellSoundsTable, 1)
+ArcticVR.RegisterCustomShell("arcticvr_case_50ae", "models/weapons/arcticvr/50aecase.mdl", 80, ArcticVR.ShellSoundsTable, 1)
+ArcticVR.RegisterCustomShell("arcticvr_bullet_50ae", "models/weapons/arcticvr/50aebullet.mdl", 90, ArcticVR.ShellSoundsTable, 1)
 
--- ArcticVR.RegisterCustomShell("arcticvr_shell_12g", "models/weapons/arcticvr/aniv/12gshell.mdl", 100, ArcticVR.ShotgunShellSoundsTable, 1, nil, true)
+-- ArcticVR.RegisterCustomShell("arcticvr_shell_12g", "models/weapons/arcticvr/12gshell.mdl", 100, ArcticVR.ShotgunShellSoundsTable, 1, nil, true)
  
-ArcticVR.RegisterCustomShell("arcticvr_shell_12g", "models/weapons/arcticvr/aniv/shellfull.mdl", 100, ArcticVR.ShotgunShellSoundsTable, 1, nil, true)
-ArcticVR.RegisterCustomShell("arcticvr_shellspent_12g", "models/weapons/arcticvr/aniv/shellempty.mdl", 110, ArcticVR.ShotgunShellSoundsTable, 1, nil, true)
+ArcticVR.RegisterCustomShell("arcticvr_shell_12g", "models/weapons/arcticvr/shellfull.mdl", 100, ArcticVR.ShotgunShellSoundsTable, 1, nil, true)
+ArcticVR.RegisterCustomShell("arcticvr_shellspent_12g", "models/weapons/arcticvr/shellempty.mdl", 110, ArcticVR.ShotgunShellSoundsTable, 1, nil, true)

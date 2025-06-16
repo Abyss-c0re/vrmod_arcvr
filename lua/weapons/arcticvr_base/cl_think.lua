@@ -6,9 +6,9 @@ function SWEP:VRThink()
 
     self:PreThink()
 
-    if self.MeleeAttack then
-        self:DetectMeleeStrike()
-    end
+    -- if self.MeleeAttack then
+    --     self:DetectMeleeStrike()
+    -- end
 
     local vec1 = Vector(1, 1, 1)
     local vec0 = vec1 * 0
