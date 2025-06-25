@@ -1,38 +1,28 @@
 AddCSLuaFile()
-
 SWEP.Spawnable = true
 SWEP.Category = "Arctic VR"
 SWEP.AdminOnly = false
 SWEP.UseHands = false
-
 SWEP.Base = "arcticvr_base"
-
 SWEP.ViewModel = "models/weapons/arcticvr/pistol_kingcobra.mdl"
 SWEP.WorldModel = "models/weapons/w_357.mdl"
-
 SWEP.ArcticVR = true
-
 SWEP.Primary.ClipSize = 6
 SWEP.Primary.DefaultClip = 1000
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "357"
-
 SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
-
 SWEP.Weight = 5
 SWEP.AutoSwitchTo = false
 SWEP.AutoSwitchFrom = false
-
 SWEP.PrintName = "VR Colt King Cobra"
 SWEP.Slot = 1
 SWEP.SlotPos = 3
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
-
-
 SWEP.DamageMin = 40
 SWEP.DamageMax = 85
 SWEP.MaxRange = 1000
@@ -50,14 +40,11 @@ SWEP.RecoilBalance = Vector(-1, 0, 0.75)
 SWEP.Spread = 1 / 550
 SWEP.MeanShotsBetweenJams = 0
 SWEP.AmmoType = "357"
-
 SWEP.MagType = "357round"
 SWEP.DefaultMagazine = "357round_1"
-
 SWEP.MuzzleEffect = "CS_MuzzleFlash"
 SWEP.CaseEffect = "arcticvr_case_357"
 SWEP.BulletEffect = "arcticvr_bullet_357"
-
 SWEP.FireSound = "weapons/357/357_fire2.wav"
 SWEP.DryFireSound = "weapons/clipempty_pistol.wav"
 SWEP.MagInSound = "weapons/xm1014/xm1014_insertshell.wav"
@@ -65,82 +52,70 @@ SWEP.MagOutSound = "weapons/357/357_reload4.wav"
 SWEP.OpenChamberSound = "weapons/p90/p90_cliprelease.wav"
 SWEP.CloseChamberSound = "weapons/p90/p90_clipin.wav"
 SWEP.SpawnMagSound = "foley/eli_hand_pat.wav"
-
 SWEP.InternalMagazine = true
 SWEP.InternalMagazineCapacity = 6
-
 if CLIENT then
+    g_VR.viewModelInfo = g_VR.viewModelInfo or {}
+    g_VR.viewModelInfo.arcticvr_kingcobra = {
+        offsetPos = Vector(5.5, 1.25, 2.5), --forward, left, up
+        offsetAng = Angle(0, 0, 0),
+    }
 
-g_VR.viewModelInfo = g_VR.viewModelInfo or {}
+    SWEP.RevolverHammer = true
+    SWEP.NonAutoloading = true
+    SWEP.VolleyFire = true
+    SWEP.VolleyFireAlwaysAdvance = true
+    SWEP.VolleyFireAutoEject = false
+    SWEP.VolleyFireAutoEjectUnspent = false
+    SWEP.VolleyFireAlwaysFromChamberOne = false
+    SWEP.VolleyFireFromOneBarrel = true
+    SWEP.BreakAction = true
+    SWEP.BreakActionOpenAng = Angle(0, -100, 0)
+    SWEP.BreakActionCloseVector = Vector(0, -1.5, 0)
+    SWEP.EjectorTapOffset = Vector(0, 0, 1)
+    SWEP.RevolverBoneRotAxis = Angle(0, 1, 0) -- which axis the revolver cylinder will revolve around
+    SWEP.VolleyFireRemoveDir = Vector(-1, 0, 0)
+    SWEP.MagazineInsertMins = Vector(-2, -2, -2)
+    SWEP.MagazineInsertMaxs = Vector(2, 2, 2)
+    SWEP.CaseBones = {
+        [1] = "chamber1",
+        [2] = "chamber2",
+        [3] = "chamber3",
+        [4] = "chamber4",
+        [5] = "chamber5",
+        [6] = "chamber6",
+    }
 
-g_VR.viewModelInfo.arcticvr_kingcobra = {
-    offsetPos = Vector(5.5, 1.25, 2.5), --forward, left, up
-    offsetAng = Angle(0, 0, 0),
-}
+    SWEP.BulletBones = {
+        [1] = "bullet1",
+        [2] = "bullet2",
+        [3] = "bullet3",
+        [4] = "bullet4",
+        [5] = "bullet5",
+        [6] = "bullet6",
+    }
 
-SWEP.RevolverHammer = true
+    SWEP.BoneIndices = {
+        kingcobra = 0,
+        pivot = 1,
+        cylinder = 2,
+        chamber1 = 3,
+        chamber2 = 4,
+        chamber3 = 5,
+        chamber4 = 6,
+        chamber5 = 7,
+        chamber6 = 8,
+        bullet1 = 9,
+        bullet2 = 10,
+        bullet3 = 11,
+        bullet4 = 12,
+        bullet5 = 13,
+        bullet6 = 14,
+        ejector = 15,
+        muzzle = 16,
+        hammer = 17,
+        trigger = 18,
+    }
 
-SWEP.NonAutoloading = true
-SWEP.VolleyFire = true
-SWEP.VolleyFireAlwaysAdvance = true
-SWEP.VolleyFireAutoEject = false
-SWEP.VolleyFireAutoEjectUnspent = false
-SWEP.VolleyFireAlwaysFromChamberOne = false
-SWEP.VolleyFireFromOneBarrel = true
-
-SWEP.BreakAction = true
-SWEP.BreakActionOpenAng = Angle(0, -100, 0)
-SWEP.BreakActionCloseVector = Vector(0, -1.5, 0)
-SWEP.EjectorTapOffset = Vector(0, 0, 1)
-SWEP.RevolverBoneRotAxis = Angle(0, 1, 0) -- which axis the revolver cylinder will revolve around
-SWEP.VolleyFireRemoveDir = Vector(-1, 0, 0)
-
-SWEP.MagazineInsertMins = Vector(-2, -2, -2)
-SWEP.MagazineInsertMaxs = Vector(2, 2, 2)
-
-SWEP.CaseBones = {
-    [1] = "chamber1",
-    [2] = "chamber2",
-    [3] = "chamber3",
-    [4] = "chamber4",
-    [5] = "chamber5",
-    [6] = "chamber6",
-}
-
-SWEP.BulletBones = {
-    [1] = "bullet1",
-    [2] = "bullet2",
-    [3] = "bullet3",
-    [4] = "bullet4",
-    [5] = "bullet5",
-    [6] = "bullet6",
-}
-
-SWEP.BoneIndices = {
-    kingcobra = 0,
-    pivot = 1,
-    cylinder = 2,
-    chamber1 = 3,
-    chamber2 = 4,
-    chamber3 = 5,
-    chamber4 = 6,
-    chamber5 = 7,
-    chamber6 = 8,
-    bullet1 = 9,
-    bullet2 = 10,
-    bullet3 = 11,
-    bullet4 = 12,
-    bullet5 = 13,
-    bullet6 = 14,
-    ejector = 15,
-    muzzle = 16,
-    hammer = 17,
-    trigger = 18,
-}
-
-
-SWEP.Firemodes = {
-    1
-}
-
+    SWEP.Firemodes = {1}
 end

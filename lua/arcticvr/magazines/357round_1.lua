@@ -1,5 +1,4 @@
 mag = {}
-
 mag.Name = "357round_1"
 mag.PrintName = ".357 Round"
 mag.Capacity = 1

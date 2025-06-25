@@ -1,5 +1,4 @@
 if SERVER then return end
-
 local function InjectArcVRMenu()
     -- Wait until vrmod.GetConvars is available
     if not vrmod or not vrmod.GetConvars then
@@ -11,7 +10,6 @@ local function InjectArcVRMenu()
     timer.Simple(0, function()
         hook.Add("VRMod_Menu", "addarcvr", function(frame)
             if not ConVarExists("arcticvr_virtualstock") then return end
-
             local function AddCheckbox(panel, y, text, convar)
                 local cb = panel:Add("DCheckBoxLabel")
                 cb:SetPos(25, y)
@@ -37,7 +35,6 @@ local function InjectArcVRMenu()
             local sheet = vgui.Create("DPropertySheet", frame.DPropertySheet)
             frame.DPropertySheet:AddSheet("ArcVR", sheet)
             sheet:Dock(FILL)
-
             -- Settings1
             local p1 = vgui.Create("DPanel", sheet)
             sheet:AddSheet("Settings1", p1, "icon16/tick.png")
@@ -48,7 +45,6 @@ local function InjectArcVRMenu()
             AddSlider(p1, 250, 320, 50, "[arcticvr_grip_magnification]\nLarger value = more grip sensitivity", "arcticvr_grip_magnification", 1, 10, 2)
             AddCheckbox(p1, 310, "[arcticvr_disable_reload_with_key]", "arcticvr_disable_reloadkey")
             AddCheckbox(p1, 330, "[arcticvr_disable_grabreload]", "arcticvr_disable_grabreload")
-
             -- Settings2
             local p2 = vgui.Create("DPanel", sheet)
             sheet:AddSheet("Settings2", p2, "icon16/tick.png")
@@ -57,7 +53,6 @@ local function InjectArcVRMenu()
             AddCheckbox(p2, 150, "[Grenade_pin_enable]\nThrow grenades without pin when unchecked", "arcticvr_grenade_pin_enable")
             AddCheckbox(p2, 220, "[Shoot System Fix]\nFix shotgun sights; may break some weapons", "arcticvr_shootsys")
             AddCheckbox(p2, 270, "[test_cl_misc_fix]\nEnable for magazine removal issues", "arcticvr_test_cl_misc_fix")
-
             -- MagPouch
             local p4 = vgui.Create("DPanel", sheet)
             sheet:AddSheet("MagPouch", p4, "icon16/briefcase.png")
@@ -67,7 +62,6 @@ local function InjectArcVRMenu()
             AddCheckbox(p4, 85, "[headpouch]", "arcticvr_headpouch")
             AddSlider(p4, 100, 320, 25, "Head Pouch Distance", "arcticvr_headpouchdist", 0, 200, 1)
             AddCheckbox(p4, 130, "[infinity range pouch]", "arcticvr_infpouch")
-
             -- Server Settings
             local p5 = vgui.Create("DPanel", sheet)
             sheet:AddSheet("Server", p5, "icon16/tick.png")

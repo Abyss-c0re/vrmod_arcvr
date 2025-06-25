@@ -1,37 +1,28 @@
 AddCSLuaFile()
-
 SWEP.Spawnable = true
 SWEP.Category = "Arctic VR"
 SWEP.AdminOnly = false
 SWEP.UseHands = false
-
 SWEP.Base = "arcticvr_base"
-
 SWEP.ViewModel = "models/weapons/arcticvr/sniper_scout.mdl"
 SWEP.WorldModel = "models/weapons/w_snip_scout.mdl"
-
 SWEP.ArcticVR = true
-
 SWEP.Primary.ClipSize = 10
 SWEP.Primary.DefaultClip = 1000
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "ar2"
-
 SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
-
 SWEP.Weight = 5
 SWEP.AutoSwitchTo = false
 SWEP.AutoSwitchFrom = false
-
 SWEP.PrintName = "VR Steyr Scout"
 SWEP.Slot = 3
 SWEP.SlotPos = 1
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
-
 SWEP.DamageMin = 120
 SWEP.DamageMax = 60
 SWEP.MaxRange = 5000
@@ -47,14 +38,11 @@ SWEP.RecoilBalance = Vector(-1, 0, 0.75)
 SWEP.Spread = 1 / 750
 SWEP.MeanShotsBetweenJams = 0
 SWEP.AmmoType = "ar2"
-
 SWEP.MagType = "scout"
 SWEP.DefaultMagazine = "scout_10"
-
 SWEP.MuzzleEffect = "CS_MuzzleFlash"
 SWEP.CaseEffect = "arcticvr_case_308"
 SWEP.BulletEffect = "arcticvr_bullet_308"
-
 SWEP.FireSound = "weapons/scout/scout_fire-1.wav"
 SWEP.DryFireSound = "weapons/clipempty_pistol.wav"
 SWEP.SwitchModeSound = "weapons/ar2/ar2_empty.wav"
@@ -65,76 +53,59 @@ SWEP.SlideForwardSound = "weapons/arcticvr/scout_boltforward.wav"
 SWEP.MagInSound = "weapons/scout/scout_clipin.wav"
 SWEP.MagOutSound = "weapons/scout/scout_clipout.wav"
 SWEP.SpawnMagSound = "foley/eli_hand_pat.wav"
-
 SWEP.NonAutoloading = true
-
 if CLIENT then
+    g_VR.viewModelInfo = g_VR.viewModelInfo or {}
+    g_VR.viewModelInfo.arcticvr_scout = {
+        offsetPos = Vector(5.5, 1.25, 2.5), --forward, left, up
+        offsetAng = Angle(0, 0, 0),
+    }
 
-g_VR.viewModelInfo = g_VR.viewModelInfo or {}
+    SWEP.CanLockBack = false
+    SWEP.MagCanDropFree = false
+    SWEP.BoltCanAutoRelease = false
+    SWEP.SlideNoAutoReciprocate = true
+    SWEP.NonReciprocatingChargingHandle = true
+    SWEP.CHandleRaiseAtStart = true
+    SWEP.TwoHanded = true
+    SWEP.RTScope = true -- weapon has an RT scope
+    SWEP.RTScopeSubmatIndex = 1 -- what is the submaterial index of the scope material?
+    SWEP.RTScopeFOV = 10 / 7 -- what is the field of view of the scope?
+    SWEP.RTScopeRes = 256
+    SWEP.RTScopeSurface = Material("effects/avr_rt")
+    SWEP.RTScopeOffset = Vector(0, 0, 0)
+    SWEP.RTScopeReticle = Material("scopes/tricross.png")
+    SWEP.StabilityFrames = 20
+    SWEP.ForegripAngle = Angle(0, -90, -90)
+    SWEP.ForegripOffset = Vector(15, -4, 0)
+    SWEP.ForegripMins = Vector(-4, -4, -4)
+    SWEP.ForegripMaxs = Vector(4, 4, 4)
+    SWEP.SlideMins = Vector(-4, -2, -4)
+    SWEP.SlideMaxs = Vector(4, 2, 4)
+    SWEP.MagazineInsertMins = Vector(-2, -4, -3)
+    SWEP.MagazineInsertMaxs = Vector(2, 0, 3)
+    SWEP.MagazineOffset = Vector(0, 0, 0)
+    SWEP.MagazineAngleOffset = Angle(0, 0, 0)
+    SWEP.SlideDir = Vector(0, 0, -1)
+    SWEP.CHandleRaiseAmount = 1.5
+    SWEP.CHandleRaisedOffset = {
+        pos = Vector(0.75881, 1.40311, 0),
+        ang = Angle(0, 44.2, 0)
+    }
 
-g_VR.viewModelInfo.arcticvr_scout = {
-    offsetPos = Vector(5.5, 1.25, 2.5), --forward, left, up
-    offsetAng = Angle(0, 0, 0),
-}
+    SWEP.SlideBlowbackAmount = 2.6
+    SWEP.BoneIndices = {
+        scout = 0,
+        magazine = 1,
+        trigger = 2,
+        slide = 3,
+        bullet = 4,
+        chandle = 5,
+        muzzle = 6,
+        eject = 7,
+        scope = 8,
+        foregrip = 9,
+    }
 
-SWEP.CanLockBack = false
-SWEP.MagCanDropFree = false
-SWEP.BoltCanAutoRelease = false
-SWEP.SlideNoAutoReciprocate = true
-SWEP.NonReciprocatingChargingHandle = true
-SWEP.CHandleRaiseAtStart = true
-SWEP.TwoHanded = true
-
-SWEP.RTScope = true -- weapon has an RT scope
-SWEP.RTScopeSubmatIndex = 1 -- what is the submaterial index of the scope material?
-SWEP.RTScopeFOV = 10 / 7 -- what is the field of view of the scope?
-SWEP.RTScopeRes = 256
-SWEP.RTScopeSurface = Material("effects/avr_rt")
-SWEP.RTScopeOffset = Vector(0, 0, 0)
-SWEP.RTScopeReticle = Material("scopes/tricross.png")
-
-SWEP.StabilityFrames = 20
-
-SWEP.ForegripAngle = Angle(0, -90, -90)
-SWEP.ForegripOffset = Vector(15, -4, 0)
-
-SWEP.ForegripMins = Vector(-4, -4, -4)
-SWEP.ForegripMaxs = Vector(4, 4, 4)
-
-SWEP.SlideMins = Vector(-4, -2, -4)
-SWEP.SlideMaxs = Vector(4, 2, 4)
-
-SWEP.MagazineInsertMins = Vector(-2, -4, -3)
-SWEP.MagazineInsertMaxs = Vector(2, 0, 3)
-
-SWEP.MagazineOffset = Vector(0, 0, 0)
-SWEP.MagazineAngleOffset = Angle(0, 0, 0)
-
-SWEP.SlideDir = Vector(0, 0, -1)
-
-SWEP.CHandleRaiseAmount = 1.5
-SWEP.CHandleRaisedOffset = {
-    pos = Vector(0.75881, 1.40311, 0),
-    ang = Angle(0, 44.2, 0)
-}
-
-SWEP.SlideBlowbackAmount = 2.6
-
-SWEP.BoneIndices = {
-    scout = 0,
-    magazine = 1,
-    trigger = 2,
-    slide = 3,
-    bullet = 4,
-    chandle = 5,
-    muzzle = 6,
-    eject = 7,
-    scope = 8,
-    foregrip = 9,
-}
-
-SWEP.Firemodes = {
-    1,
-}
-
+    SWEP.Firemodes = {1,}
 end

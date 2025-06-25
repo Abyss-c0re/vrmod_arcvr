@@ -25,62 +25,45 @@ ArcticVR.MatPenMultTable = {
 }
 
 local pentracelen = 4
-
 function ArcticVR:BulletPenetrate(tr, bullet)
    if tr.HitSky then return end
-
-   if tr.DispFlags != 0 then return end
-
+   if tr.DispFlags ~= 0 then return end
    if tr.Entity:IsNPC() or tr.Entity:IsPlayer() then return end
-
    if bullet.vel <= 0 then return end
-
    local penmult = ArcticVR.MatPenMultTable[tr.MatType] or 1
-
-   if !tr.HitWorld then
-      penmult = penmult * 1.25
-   end
-
+   if not tr.HitWorld then penmult = penmult * 1.25 end
    penmult = penmult * math.Rand(0.8, 1.2) * math.Rand(0.8, 1.2)
-
    local dir = bullet.dir:GetNormalized()
    local endpos = tr.HitPos
-
    local ptr = util.TraceLine({
       start = endpos,
-      endpos = endpos + (dir * pentracelen),
+      endpos = endpos + dir * pentracelen,
       mask = MASK_SHOT
    })
 
    local vel = bullet.vel
    local penleft = bullet.penleft
-
    penleft = penleft - 1
-
-   while penleft > 0 and vel > 0 and (!ptr.StartSolid or ptr.AllSolid) and ptr.Fraction < 1 do
-      penleft = penleft - (pentracelen * penmult)
-      bullet.disttravelled = bullet.disttravelled + (pentracelen * penmult * 10)
-      vel = vel - (vel * vel * (1 / 15000) * penmult * penmult)
-
+   while penleft > 0 and vel > 0 and (not ptr.StartSolid or ptr.AllSolid) and ptr.Fraction < 1 do
+      penleft = penleft - pentracelen * penmult
+      bullet.disttravelled = bullet.disttravelled + pentracelen * penmult * 10
+      vel = vel - vel * vel * 1 / 15000 * penmult * penmult
       ptr = util.TraceLine({
          start = endpos,
-         endpos = endpos + (dir * pentracelen),
+         endpos = endpos + dir * pentracelen,
          mask = MASK_SHOT
       })
 
-      debugoverlay.Line(endpos, endpos + (dir * pentracelen), 5, Color(255,255,255), true)
-
-      endpos = endpos + (dir * pentracelen)
+      debugoverlay.Line(endpos, endpos + dir * pentracelen, 5, Color(255, 255, 255), true)
+      endpos = endpos + dir * pentracelen
    end
 
    if penleft > 0 and vel > pentracelen and bullet.disttravelled < bullet.maxrange then
       --print("bullet penetrated with " .. penleft .. "mm pen left")
       --print(vel)
-      if (dir:Length() == 0) then return end
+      if dir:Length() == 0 then return end
       ArcticVR:ShootPhysicalBullet(endpos, dir:Angle(), vel, bullet.appearance, bullet.mindamage, bullet.maxdamage, bullet.maxrange, bullet.inflictor, bullet.attacker, penleft, bullet.callback, bullet.disttravelled, bullet.lifetime)
-
-      if !bullet.attacker then return end
-
+      if not bullet.attacker then return end
       bullet.attacker:FireBullets({
          Damage = 0,
          Src = endpos,
@@ -89,7 +72,7 @@ function ArcticVR:BulletPenetrate(tr, bullet)
          Tracer = 0,
          Force = 0
       }, true)
-   --else
+      --else
       --print("bullet stopped")
    end
 end
