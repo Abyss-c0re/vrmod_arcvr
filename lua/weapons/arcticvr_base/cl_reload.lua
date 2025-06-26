@@ -88,6 +88,7 @@ function SWEP:InsertMagazineBehaviour()
     if not leftent.ArcticVR then return end
     if not leftent.MagType then return end
     local magtbl = ArcticVR.MagazineTable[leftent.MagID]
+    if not magtbl then return end
     if magtbl.IsBeltBox then
         if leftent.MagType ~= self.BeltBoxType then return end
     else
