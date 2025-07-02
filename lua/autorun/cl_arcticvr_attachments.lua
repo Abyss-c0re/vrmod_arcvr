@@ -1,3 +1,4 @@
+AddCSLuaFile()
 net.Receive("avr_sendatts", function(len, ply)
     local ent = net.ReadEntity()
     local amt = net.ReadUInt(10)

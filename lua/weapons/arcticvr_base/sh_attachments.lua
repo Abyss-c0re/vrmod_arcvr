@@ -1,3 +1,4 @@
+AddCSLuaFile()
 if CLIENT then
     function SWEP:AttRender()
         for i, k in pairs(self.Attachments) do

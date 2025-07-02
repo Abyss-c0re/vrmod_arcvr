@@ -1,3 +1,4 @@
+AddCSLuaFile()
 ArcticVR = ArcticVR or {}
 ArcticVR.AttachmentTable = {}
 ArcticVR.AttachmentIDTable = {}

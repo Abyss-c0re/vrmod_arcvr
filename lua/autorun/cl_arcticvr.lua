@@ -1,3 +1,4 @@
+AddCSLuaFile()
 if CLIENT then
     ArcticVR = ArcticVR or {}
     ArcticVR.StabilityFrameIndex = 1

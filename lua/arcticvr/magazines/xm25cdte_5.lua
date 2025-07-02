@@ -1,3 +1,4 @@
+AddCSLuaFile()
 mag = {}
 mag.Name = "xm25cdte_5"
 mag.PrintName = "XM25 CDTE Magazine"

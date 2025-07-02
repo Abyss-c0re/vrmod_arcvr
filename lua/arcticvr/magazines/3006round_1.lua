@@ -1,3 +1,4 @@
+AddCSLuaFile()
 mag = {}
 mag.Name = "3006round_1"
 mag.PrintName = ".30-06 Round"

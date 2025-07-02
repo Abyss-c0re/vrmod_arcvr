@@ -1,3 +1,4 @@
+AddCSLuaFile()
 local cv_lefthandmax_mode = CreateClientConVar("arcticvr_test_cl_misc_fix", "1", FCVAR_ARCHIVE)
 function SWEP:VRDeploy()
     local vm = g_VR.viewModel

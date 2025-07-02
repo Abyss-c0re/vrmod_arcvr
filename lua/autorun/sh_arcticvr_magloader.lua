@@ -1,3 +1,4 @@
+AddCSLuaFile()
 ArcticVR = ArcticVR or {}
 ArcticVR.MagazineTable = {}
 ArcticVR.NumMagazines = 0

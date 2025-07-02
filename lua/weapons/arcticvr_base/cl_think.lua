@@ -1,3 +1,4 @@
+AddCSLuaFile()
 function SWEP:VRThink()
     local vm = g_VR.viewModel
     if not vm then return end

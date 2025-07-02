@@ -1,3 +1,4 @@
+AddCSLuaFile()
 mag = {}
 mag.Name = "mac10_32_aniv"
 mag.PrintName = "MAC-10 Magazine"

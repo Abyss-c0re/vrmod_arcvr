@@ -1,3 +1,4 @@
+AddCSLuaFile()
 mag = {}
 mag.Name = "12gshell_1_aniv"
 mag.PrintName = "12 Gauge Shell"

@@ -1,3 +1,4 @@
+AddCSLuaFile()
 concommand.Add("arcticvr_printvmbones", function(ply)
     local vm = ply:GetViewModel()
     print("SWEP.BoneIndices = {")

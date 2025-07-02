@@ -1,3 +1,4 @@
+AddCSLuaFile()
 ArcticVR.lasthelditem = nil
 local cv_allgunreloadkey = CreateClientConVar("arcticvr_allgun_allow_reloadkey", "0", true, FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE) or false
 local cv_allgunreloadkeyclient = CreateClientConVar("arcticvr_allgun_allow_reloadkey_client", "0", true, FCVAR_ARCHIVE)

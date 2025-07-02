@@ -1,3 +1,4 @@
+AddCSLuaFile()
 ArcticVR = ArcticVR or {}
 ArcticVR.RegisterCustomShell("arcticvr_case_308", "models/weapons/arcticvr/308case.mdl", 83, ArcticVR.ShellSoundsTable, 1)
 ArcticVR.RegisterCustomShell("arcticvr_bullet_308", "models/weapons/arcticvr/308bullet.mdl", 88, ArcticVR.ShellSoundsTable, 1)

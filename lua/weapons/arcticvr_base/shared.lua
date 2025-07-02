@@ -1,3 +1,4 @@
+AddCSLuaFile()
 -- Okay, listen up, because I'm going to take you on a tutorial to make VR weapons.
 -- Before you even touch this file, you will need the following:
 --  - A VR headset. I mean, you could technically do this without one, but what'd be the point?

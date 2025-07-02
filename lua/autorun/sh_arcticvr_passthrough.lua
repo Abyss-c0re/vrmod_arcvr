@@ -1,1 +1,2 @@
+AddCSLuaFile()
 ArcticVR = ArcticVR or {}

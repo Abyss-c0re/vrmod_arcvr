@@ -1,3 +1,4 @@
+AddCSLuaFile()
 if SERVER then return end
 local function InjectArcVRMenu()
     if not vrmod or not vrmod.GetConvars then

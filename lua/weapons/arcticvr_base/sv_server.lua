@@ -1,3 +1,4 @@
+AddCSLuaFile()
 local shootsys = CreateClientConVar("arcticvr_shootsys", "1", true, FCVAR_ARCHIVE)
 function SWEP:Deploy()
     self:SendWeapon(true, false)

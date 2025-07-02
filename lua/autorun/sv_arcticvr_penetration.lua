@@ -1,3 +1,4 @@
+AddCSLuaFile()
 ArcticVR.MatPenMultTable = {
    [MAT_ANTLION] = 0.3,
    [MAT_BLOODYFLESH] = 6,

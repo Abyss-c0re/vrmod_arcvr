@@ -1,3 +1,4 @@
+AddCSLuaFile()
 ArcticVR = ArcticVR or {}
 ArcticVR.ShellSoundsTable_556 = {"arcvr_ins2/bullets/shells/concrete/9mm_shell_concrete_01.wav", "arcvr_ins2/bullets/shells/concrete/9mm_shell_concrete_02.wav", "arcvr_ins2/bullets/shells/concrete/9mm_shell_concrete_03.wav", "arcvr_ins2/bullets/shells/concrete/9mm_shell_concrete_04.wav", "arcvr_ins2/bullets/shells/concrete/9mm_shell_concrete_05.wav", "arcvr_ins2/bullets/shells/concrete/9mm_shell_concrete_06.wav",}
 ArcticVR.ShellSoundsTable_12g = {"arcvr_ins2/bullets/shells/concrete/shotgun_shell_concrete_01.wav", "arcvr_ins2/bullets/shells/concrete/shotgun_shell_concrete_02.wav", "arcvr_ins2/bullets/shells/concrete/shotgun_shell_concrete_03.wav", "arcvr_ins2/bullets/shells/concrete/shotgun_shell_concrete_04.wav", "arcvr_ins2/bullets/shells/concrete/shotgun_shell_concrete_05.wav", "arcvr_ins2/bullets/shells/concrete/shotgun_shell_concrete_06.wav",}

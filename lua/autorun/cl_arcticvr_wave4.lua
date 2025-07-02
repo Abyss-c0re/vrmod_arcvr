@@ -1,3 +1,4 @@
+AddCSLuaFile()
 ArcticVR = ArcticVR or {}
 if CLIENT then
 	ArcticVR.RegisterCustomShell("arcticvr_case_357", "models/weapons/arcticvr/357case.mdl", 100, ArcticVR.ShellSoundsTable, 1)

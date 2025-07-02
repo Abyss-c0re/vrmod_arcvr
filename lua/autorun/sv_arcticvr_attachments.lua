@@ -1,3 +1,4 @@
+AddCSLuaFile()
 net.Receive("avr_attach", function(len, ply)
     local attent = net.ReadEntity()
     local wpn = ply:GetActiveWeapon()

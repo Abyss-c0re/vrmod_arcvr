@@ -1,3 +1,4 @@
+AddCSLuaFile()
 local att = {}
 att.Name = "ammo_12g_slug"
 att.PrintName = "Ammo Kit 12G - Slug"

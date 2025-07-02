@@ -1,3 +1,4 @@
+AddCSLuaFile()
 local att = {}
 att.DoNotRegister = false -- do not register entity under any circumstances
 att.PrintName = "Attachment" -- display name of the attachment

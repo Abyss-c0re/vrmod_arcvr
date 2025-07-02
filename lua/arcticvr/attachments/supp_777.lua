@@ -1,3 +1,4 @@
+AddCSLuaFile()
 local att = {}
 att.Name = "supp_777"
 att.PrintName = "M4A1 Suppressor"

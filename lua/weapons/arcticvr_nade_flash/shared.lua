@@ -1,3 +1,4 @@
+AddCSLuaFile()
 SWEP.Spawnable = true
 SWEP.Category = "Arctic VR" -- edit this if you like
 SWEP.AdminOnly = false

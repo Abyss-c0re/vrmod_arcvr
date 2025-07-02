@@ -1,3 +1,4 @@
+AddCSLuaFile()
 local cv_bumpreload = CreateClientConVar("arcticvr_mag_bumpreload", "1", true, FCVAR_ARCHIVE)
 local cv_bumpreload_allgun = CreateClientConVar("arcticvr_bumpreload_allgun", "0", true, FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE) or false
 local cv_bumpreload_allgun_client = CreateClientConVar("arcticvr_bumpreload_allgun_client", "0", true, FCVAR_ARCHIVE)

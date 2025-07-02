@@ -1,3 +1,4 @@
+AddCSLuaFile()
 mag = {}
 mag.Name = "rpg7rocket_1"
 mag.PrintName = "RPG-7 Rocket"

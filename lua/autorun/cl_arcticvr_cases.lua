@@ -1,3 +1,4 @@
+AddCSLuaFile()
 ArcticVR = ArcticVR or {}
 ArcticVR.ShellSoundsTable = {"arcticvr/shell/shell_1.wav", "arcticvr/shell/shell_2.wav", "arcticvr/shell/shell_3.wav", "arcticvr/shell/shell_4.wav", "arcticvr/shell/shell_5.wav", "arcticvr/shell/shell_6.wav", "arcticvr/shell/shell_7.wav", "arcticvr/shell/shell_8.wav", "arcticvr/shell/shell_9.wav", "arcticvr/shell/shell_10.wav", "arcticvr/shell/shell_11.wav",}
 ArcticVR.ShotgunShellSoundsTable = {"weapons/fx/tink/shotgun_shell1.wav", "weapons/fx/tink/shotgun_shell2.wav", "weapons/fx/tink/shotgun_shell3.wav"}

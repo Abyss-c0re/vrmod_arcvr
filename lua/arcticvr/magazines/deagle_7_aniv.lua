@@ -1,3 +1,4 @@
+AddCSLuaFile()
 mag = {}
 mag.Name = "deagle_7_aniv"
 mag.PrintName = "Desert Eagle Magazine"

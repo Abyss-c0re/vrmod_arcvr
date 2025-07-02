@@ -1,3 +1,4 @@
+AddCSLuaFile()
 if SERVER then
     CreateClientConVar("arcticvr_net_magtimertime", "0.11", true, FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE)
     CreateClientConVar("arcticvr_defaultammo_normalize", "0", true, FCVAR_ARCHIVE, "")
