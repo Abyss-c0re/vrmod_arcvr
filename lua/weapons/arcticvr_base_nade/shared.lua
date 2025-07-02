@@ -130,7 +130,7 @@ if CLIENT then
 	SWEP.NextNadeTime = 0
 	function SWEP:VRInput(action, state)
 		local vm = g_VR.viewModel
-		local cv_pinsys = CreateClientConVar("arcticvr_grenade_pin_enable", "0")
+		local cv_pinsys = CreateClientConVar("arcticvr_grenade_pin_enable", "1")
 		if cv_pinsys:GetBool() then
 			if g_VR.input.boolean_primaryfire then
 				local ammo = LocalPlayer():GetAmmoCount(self.Primary.Ammo)
