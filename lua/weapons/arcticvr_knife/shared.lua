@@ -31,6 +31,7 @@ if CLIENT then
     g_VR.viewModelInfo.arcticvr_knife = {
         offsetPos = Vector(3.5, 1, 2.5), --forward, left, up
         offsetAng = Angle(0, 0, 0),
+        noLaser = true
     }
 
     SWEP.BoneIndices = {
