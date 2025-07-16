@@ -84,10 +84,7 @@ local prevlhinmagmaxs = false
 function SWEP:InsertMagazineBehaviour()
     local vm = g_VR.viewModel
     local leftent = g_VR.heldEntityLeft
-    -- is a magazine in the right position?
-    if not leftent then return end
-    if not leftent.ArcticVR then return end
-    if not leftent.MagType then return end
+    if not leftent or not leftent.ArcticVR or not leftent.MagType then return end
     local magtbl = ArcticVR.MagazineTable[leftent.MagID]
     if not magtbl then return end
     if magtbl.IsBeltBox then
@@ -110,15 +107,15 @@ function SWEP:InsertMagazineBehaviour()
             net.WriteEntity(leftent)
             net.WriteBool(true)
             net.SendToServer()
-            if self.DirectChamberSound then
-                self:PlayNetworkedSound(nil, "DirectChamberSound")
-            else
-                self:PlayNetworkedSound(nil, "MagInSound")
-            end
-
+            self:PlayNetworkedSound(nil, self.DirectChamberSound and "DirectChamberSound" or "MagInSound")
             self.Chambered = self.Chambered + 1
             g_VR.heldEntityLeft.RenderOverride = function(a) return end
             g_VR.heldEntityLeft = nil
+            -- Enforce NoDraw on active weapon
+            if not GetConVar("vrmod_useworldmodels"):GetBool() then
+                local weapon = LocalPlayer():GetActiveWeapon()
+                if IsValid(weapon) then weapon:SetNoDraw(true) end
+            end
             return
         end
     end
@@ -140,9 +137,7 @@ function SWEP:InsertMagazineBehaviour()
     end
 
     prevlhinmagmaxs = inmaxs
-    if not inmaxs then return end
-    if self.Magazine then return end
-    -- send a message to insert the new magazine.
+    if not inmaxs or self.Magazine then return end
     net.Start("avr_magin")
     net.WriteEntity(leftent)
     net.WriteBool(false)
@@ -153,7 +148,6 @@ function SWEP:InsertMagazineBehaviour()
     else
         self.LoadedRounds = leftent.Rounds
         self.Magazine = leftent.Name
-        -- on our side, hide the magazine, and create a visual magazine to swoop into position.
         SafeRemoveEntity(ArcticVR.CSMagazine)
         ArcticVR.CSMagazine = ClientsideModel(leftent:GetModel())
         ArcticVR.CSMagazine:SetParent(vm)
@@ -163,6 +157,11 @@ function SWEP:InsertMagazineBehaviour()
 
     g_VR.heldEntityLeft.RenderOverride = function(a) return end
     g_VR.heldEntityLeft = nil
+    -- Enforce NoDraw on active weapon
+    if not GetConVar("vrmod_useworldmodels"):GetBool() then
+        local weapon = LocalPlayer():GetActiveWeapon()
+        if IsValid(weapon) then weapon:SetNoDraw(true) end
+    end
 end
 
 function SWEP:PostDrawViewModel()
@@ -186,6 +185,10 @@ function SWEP:PostDrawViewModel()
     self:HolosightFunc()
     self:LaserSightFunc()
     self:AttRender()
+    if not GetConVar("vrmod_useworldmodels"):GetBool() then
+        local weapon = LocalPlayer():GetActiveWeapon()
+        if IsValid(weapon) then weapon:SetNoDraw(true) end
+    end
 end
 
 function SWEP:OpenChambers()
