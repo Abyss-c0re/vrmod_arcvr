@@ -250,4 +250,6 @@ function SWEP:VR_Shoot()
     self:DoRecoil()
     self:DoEffects()
     self.BurstLength = self.BurstLength + 1
+    local rpm = self.RPM * self:GetBuff("Buff_RPM")
+    self.NextPrimaryFire = CurTime() + 60 / rpm
 end
