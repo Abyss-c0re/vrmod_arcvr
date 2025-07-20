@@ -1,9 +1,10 @@
 AddCSLuaFile()
 function SWEP:InitRT()
     local vm = g_VR.viewModel
-    if not vm then return end
-    if not IsValid(vm) then return end
-    if self.RTScope then self.RTScopeMat = GetRenderTarget("avr_rtmat", self.RTScopeRes, self.RTScopeRes, false) end
+    if not vm or not IsValid(vm) or not self.RTScope then return end
+    -- Create separate render targets for left and right eyes
+    self.RTScopeMatLeft = GetRenderTarget("avr_rtmat_left_" .. self:EntIndex(), self.RTScopeRes, self.RTScopeRes, false)
+    self.RTScopeMatRight = GetRenderTarget("avr_rtmat_right_" .. self:EntIndex(), self.RTScopeRes, self.RTScopeRes, false)
 end
 
 function SWEP:RTScopeExtra(size)
@@ -11,49 +12,31 @@ end
 
 function SWEP:RTScopeFunc(left)
     local vm = g_VR.viewModel
-    if not vm then return end
-    if not IsValid(vm) then return end
-    if self.RTScope then
-        if not self.RTScopeMat then self:InitRT() end
-        self:DrawRTScope(self, vm, self.RTScopeMat, self.RTScopeSurface, left)
-    end
+    if not vm or not IsValid(vm) or not self.RTScope then return end
+    if not self.RTScopeMatLeft or not self.RTScopeMatRight then self:InitRT() end
+    self:DrawRTScope(self, vm, left and self.RTScopeMatLeft or self.RTScopeMatRight, self.RTScopeSurface, left)
 end
 
 local shadow = Material("scopes/shadow.png")
 function SWEP:DrawRTScope(rts, rtsm, rtmat, rtsurf, left)
     local attid = rtsm:LookupAttachment("scope")
     if not attid then return end
-    -- if !ret then return end
     local ret = rtsm:GetAttachment(attid)
+    if not ret then return end
+
     local pos = ret.Pos
     local ang = rtsm:LocalToWorldAngles(Angle(0, 0, 0))
-    pos = pos + ang:Right() * rts.RTScopeOffset[1]
-    pos = pos + ang:Forward() * rts.RTScopeOffset[2]
-    pos = pos + ang:Up() * rts.RTScopeOffset[1]
-    local eyeang = g_VR.tracking.hmd.ang
-    local lefteye = g_VR.eyePosLeft
-    local righteye = g_VR.eyePosRight
-    local lett = pos - lefteye
-    local rett = pos - righteye
-    local ldom = false
-    if lett:Length() > rett:Length() then ldom = true end
-    local eyepos = g_VR.eyePosRight
-    local othereye = g_VR.eyePosLeft
-    if left then
-        eyepos = g_VR.eyePosLeft
-        othereye = g_VR.eyePosRight
-    end
 
+    pos = pos + ang:Right() * rts.RTScopeOffset[1] +
+          ang:Forward() * rts.RTScopeOffset[2] +
+          -ang:Up() * 1.75
+  
+
+    local eyepos = left and g_VR.eyePosLeft or g_VR.eyePosRight
     local eyedist = (pos - eyepos):Length() + 1
-    local eyediff = (pos - othereye):Length() + 1
-    local eyebruh = math.Clamp(eyediff - eyedist, 0, 2)
-    if eyebruh > 1 then eyebruh = 2 - eyebruh end
-    eyebruh = math.Clamp(eyebruh * 16, 0, 1)
-    eyebruh = eyebruh - eyedist / 96
     local size = rts.RTScopeRes
-    local ogscrw = ScrW()
-    local ogscrh = ScrH()
-    local fov = rts.RTScopeFOV
+    local fov = rts.RTScopeFOV / eyedist * 16
+
     local rt = {
         x = 0,
         y = 0,
@@ -62,50 +45,28 @@ function SWEP:DrawRTScope(rts, rtsm, rtmat, rtsurf, left)
         angles = ang,
         origin = pos,
         drawviewmodel = false,
-        fov = fov / eyedist * 32,
+        fov = fov,
+        aspectratio = left and g_VR.aspectLeft or g_VR.aspectRight, -- Use VR aspect ratios
     }
 
+    local ogscrw, ogscrh = ScrW(), ScrH()
     local ogrt = render.GetRenderTarget()
     render.PushRenderTarget(rtmat, 0, 0, size, size)
-    local black = false
-    if ldom == left then
-        black = true
-        render.Clear(0, 0, 0, 255, true, true)
-    else
-        render.Clear(0, 0, 0, 255, true, true)
-        render.RenderView(rt)
-    end
+    render.Clear(0, 0, 0, 255, true, true)
+    render.RenderView(rt)
 
-    if not black then
-        cam.Start3D(pos, ang, rt.fov, 0, 0, size, size)
-        local scopesize = math.Round(size * eyebruh)
-        local scopeposx = math.Round((size - scopesize) / 2)
-        local scopeposy = math.Round((size - scopesize) / 2)
-        cam.End3D()
-        cam.Start2D()
-        surface.SetDrawColor(255, 255, 255, 255)
-        surface.SetMaterial(rts.RTScopeReticle)
-        surface.DrawTexturedRect(0, 0, size, size)
-        self:RTScopeExtra(size)
-        surface.SetDrawColor(0, 0, 0)
-        if scopeposx > ScrW() or scopeposx < 0 - scopesize or scopeposy > ScrH() or scopeposy < 0 - scopesize then
-            surface.SetDrawColor(0, 0, 0)
-            surface.DrawRect(0, 0, ScrW(), ScrH())
-        else
-            surface.DrawRect(scopeposx - ScrW(), scopeposy - ScrH(), 4 * ScrW(), ScrH())
-            surface.DrawRect(scopeposx - ScrW(), scopeposy + scopesize, 4 * ScrW(), ScrH())
-            surface.DrawRect(scopeposx - ScrW(), scopeposy - ScrH(), ScrW(), 4 * ScrH())
-            surface.DrawRect(scopeposx + scopesize, scopeposy - ScrH(), ScrW(), 4 * ScrH())
-        end
-
-        surface.SetMaterial(shadow)
-        surface.DrawTexturedRect(scopeposx, scopeposy, scopesize, scopesize)
-        cam.End2D()
-    end
+    cam.Start2D()
+    surface.SetDrawColor(255, 255, 255, 255)
+    surface.SetMaterial(rts.RTScopeReticle)
+    surface.DrawTexturedRect(0, 0, size, size)
+    self:RTScopeExtra(size)
+    surface.SetDrawColor(0, 0, 0, 255)
+    surface.SetMaterial(shadow)
+    surface.DrawTexturedRect(0, 0, size, size) -- Simplified shadow rendering
+    cam.End2D()
 
     render.PopRenderTarget()
     rtsurf:SetTexture("$basetexture", rtmat)
-    rtsm:SetSubMaterial()
     rtsm:SetSubMaterial(rts.RTScopeSubmatIndex, "effects/avr_rt")
     render.SetRenderTarget(ogrt)
     render.SetViewPort(0, 0, ogscrw, ogscrh)
