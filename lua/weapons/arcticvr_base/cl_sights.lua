@@ -23,20 +23,13 @@ function SWEP:DrawRTScope(rts, rtsm, rtmat, rtsurf, left)
     if not attid then return end
     local ret = rtsm:GetAttachment(attid)
     if not ret then return end
-
     local pos = ret.Pos
     local ang = rtsm:LocalToWorldAngles(Angle(0, 0, 0))
-
-    pos = pos + ang:Right() * rts.RTScopeOffset[1] +
-          ang:Forward() * rts.RTScopeOffset[2] +
-          -ang:Up() * 1.75
-  
-
+    pos = pos + -ang:Up() * 1.75
     local eyepos = left and g_VR.eyePosLeft or g_VR.eyePosRight
     local eyedist = (pos - eyepos):Length() + 1
     local size = rts.RTScopeRes
-    local fov = rts.RTScopeFOV / eyedist * 16
-
+    local fov = rts.RTScopeFOV / eyedist * 12
     local rt = {
         x = 0,
         y = 0,
@@ -49,12 +42,12 @@ function SWEP:DrawRTScope(rts, rtsm, rtmat, rtsurf, left)
         aspectratio = left and g_VR.aspectLeft or g_VR.aspectRight, -- Use VR aspect ratios
     }
 
-    local ogscrw, ogscrh = ScrW(), ScrH()
+    local ogscrw = g_VR and g_VR.rtWidth or ScrW()
+    local ogscrh = g_VR and g_VR.rtHeight or ScrH()
     local ogrt = render.GetRenderTarget()
     render.PushRenderTarget(rtmat, 0, 0, size, size)
     render.Clear(0, 0, 0, 255, true, true)
     render.RenderView(rt)
-
     cam.Start2D()
     surface.SetDrawColor(255, 255, 255, 255)
     surface.SetMaterial(rts.RTScopeReticle)
@@ -64,7 +57,6 @@ function SWEP:DrawRTScope(rts, rtsm, rtmat, rtsurf, left)
     surface.SetMaterial(shadow)
     surface.DrawTexturedRect(0, 0, size, size) -- Simplified shadow rendering
     cam.End2D()
-
     render.PopRenderTarget()
     rtsurf:SetTexture("$basetexture", rtmat)
     rtsm:SetSubMaterial(rts.RTScopeSubmatIndex, "effects/avr_rt")
