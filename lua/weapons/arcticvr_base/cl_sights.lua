@@ -25,11 +25,11 @@ function SWEP:DrawRTScope(rts, rtsm, rtmat, rtsurf, left)
     if not ret then return end
     local pos = ret.Pos
     local ang = rtsm:LocalToWorldAngles(Angle(0, 0, 0))
-    pos = pos + -ang:Up() * 1.75
+    pos = pos + ang:Right() * rts.RTScopeOffset[1] + ang:Forward() * rts.RTScopeOffset[2] + ang:Up() * rts.RTScopeOffset[3]
     local eyepos = left and g_VR.eyePosLeft or g_VR.eyePosRight
     local eyedist = (pos - eyepos):Length() + 1
     local size = rts.RTScopeRes
-    local fov = rts.RTScopeFOV / eyedist * 12
+    local fov = rts.RTScopeFOV / eyedist * 18
     local rt = {
         x = 0,
         y = 0,
