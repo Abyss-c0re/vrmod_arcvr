@@ -42,8 +42,8 @@ function SWEP:DrawRTScope(rts, rtsm, rtmat, rtsurf, left)
         aspectratio = left and g_VR.aspectLeft or g_VR.aspectRight, -- Use VR aspect ratios
     }
 
-    local ogscrw = g_VR and g_VR.rtWidth or ScrW()
-    local ogscrh = g_VR and g_VR.rtHeight or ScrH()
+    local ogscrw = g_VR and g_VR.rtWidth / 2  or ScrW()
+    local ogscrh = g_VR and g_VR.rtHeight / 2  or ScrH()
     local ogrt = render.GetRenderTarget()
     render.PushRenderTarget(rtmat, 0, 0, size, size)
     render.Clear(0, 0, 0, 255, true, true)
