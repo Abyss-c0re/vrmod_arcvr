@@ -57,7 +57,6 @@ SWEP.SlideReleaseSound = "weapons/usp/usp_sliderelease.wav"
 SWEP.MagInSound = "weapons/usp/usp_clipin.wav"
 SWEP.MagOutSound = "weapons/usp/usp_clipout.wav"
 SWEP.SpawnMagSound = "foley/eli_hand_pat.wav"
-SWEP.NonAutoloading = true
 if CLIENT then
     g_VR.viewModelInfo = g_VR.viewModelInfo or {}
     g_VR.viewModelInfo.arcticvr_mk22 = {
