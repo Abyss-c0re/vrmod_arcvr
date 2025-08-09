@@ -94,8 +94,8 @@ if CLIENT then
 
     local prevstab = false
     function ArcticVR:GetStockDelta()
-        local headpos = g_VR.tracking.hmd.pos
-        local rhpos = g_VR.tracking.pose_righthand.pos
+        local headpos = vrmod.GetHMDPos()
+        local rhpos = vrmod.GetRightHandPos()
         local amt = 0
         local ddt = (headpos - rhpos):Length()
         local md = 10
@@ -112,7 +112,7 @@ if CLIENT then
     end
 
     local lastpos = nil
-    hook.Add("VRMod_Tracking", "avr_guntracking", function()
+    hook.Add("VRMod_PreRender", "avr_guntracking", function()
         local wpn = LocalPlayer():GetActiveWeapon()
         local lpp = g_VR.origin
         if not wpn.ArcticVR then return end
@@ -133,10 +133,10 @@ if CLIENT then
         lastpos = lastpos or lpp
         local diff = lpp - lastpos
         lastpos = lpp
-        local lhpos = g_VR.tracking.pose_lefthand.pos - lpp
-        local lhang = g_VR.tracking.pose_lefthand.ang
-        local rhpos = g_VR.tracking.pose_righthand.pos - lpp
-        local rhang = g_VR.tracking.pose_righthand.ang
+        local lhpos = vrmod.GetLeftHandPos() - lpp
+        local lhang = vrmod.GetLeftHandAng()
+        local rhpos = vrmod.GetRightHandPos() - lpp
+        local rhang = vrmod.GetRightHandAng()
         local origroll = rhang[3]
         -- record actual current position in stability frames.
         local sf = wpn.StabilityFrames
@@ -218,12 +218,10 @@ if CLIENT then
             end
 
             if twohand then
-                g_VR.tracking.pose_lefthand.pos = lhpos + lpp
-                g_VR.tracking.pose_lefthand.ang = lhang
+                local pos = lhpos + lpp
+                local ang = lhang
+                vrmod.SetLeftHandPose(pos, ang)
             end
-
-            g_VR.tracking.pose_righthand.pos = rhpos + lpp
-            g_VR.tracking.pose_righthand.ang = rhang
             return
         end
 
@@ -293,7 +291,7 @@ if CLIENT then
         lhpos = lhpos + pang:Up() * fg_offset[3]
         if wpn.PumpAction then
             local spos = WorldToLocal(lhpos, ang_offset, rhpos, newang)
-            local locpos = WorldToLocal(g_VR.tracking.pose_lefthand.pos - lpp, ang_offset, rhpos, newang)
+            local locpos = WorldToLocal(vrmod.GetLeftHandPos() - lpp, ang_offset, rhpos, newang)
             if wpn.SlideDir[1] == 0 then
                 locpos[3] = 0
             else
@@ -334,71 +332,9 @@ if CLIENT then
             lhpos = LocalToWorld(spos, ang_offset, rhpos, newang)
         end
 
-        --start
-        -- local function StartLerpingToGrabPoint(targetGrabPoint)
-        -- local vm = g_VR.viewModel
-        -- local tmpModel = g_VR.viewModel
-        -- tmpModel:SetupBones()
-        -- -- cvrg.boltBone = tmpModel:LookupBone("bolt")
-        -- -- cvrg.boltHandleBone = tmpModel:LookupBone("bolthandle")
-        -- -- cvrg.triggerBone = tmpModel:LookupBone("trigger")
-        -- -- cvrg.magBone = tmpModel:LookupBone("mag")
-        -- -- cvrg.bulletBone = tmpModel:LookupBone("bullet")
-        -- -- cvrg.muzzleBone = tmpModel:LookupBone("muzzle")
-        -- -- cvrg.entranceBone = tmpModel:LookupBone("mag_entrance")
-        -- -- cvrg.sightBone = tmpModel:LookupBone("holosight")
-        -- -- cvrg.leftHandBone = tmpModel:LookupBone("ValveBiped.Bip01_L_Hand")
-        -- -- cvrg.rightHandBone = tmpModel:LookupBone("ValveBiped.Bip01_R_Hand")
-        -- local grabPoints = {}
-        -- -- holdingGrip = (targetGrabPoint and targetGrabPoint.type == GRIP or false)
-        -- -- releasingGrip = (targetGrabPoint==nil and grabPoint.type == GRIP or false)
-        -- -- local releasingBolt = (targetGrabPoint == nil and boltGrabOffset and true or false)
-        -- --
-        -- handLerpTime = SysTime()
-        -- fingerPoseOpenStart = vrmod.GetLeftHandOpenFingerAngles()
-        -- fingerPoseClosedStart = vrmod.GetLeftHandClosedFingerAngles()
-        -- fingerPoseOpenEnd = targetGrabPoint and targetGrabPoint.fingerPose or g_VR.defaultOpenHandAngles
-        -- fingerPoseClosedEnd = targetGrabPoint and targetGrabPoint.fingerPose or g_VR.defaultClosedHandAngles
-        -- entityStart = entityEnd
-        -- entityEnd = targetGrabPoint and tmpModel
-        -- if entityStart then
-        -- if true then
-        -- boneStart = tmpModel
-        -- local mtxRH = tmpModel:GetBoneMatrix(boneStart)
-        -- local mtxSlide = tmpModel:GetBoneMatrix(boneEnd)
-        -- local handWPos, handWAng = LocalToWorld(grabPoint.pos, grabPoint.ang, mtxSlide:GetTranslation(), mtxSlide:GetAngles())
-        -- posStart, angStart = WorldToLocal( handWPos, handWAng, mtxRH:GetTranslation(), mtxRH:GetAngles())
-        -- else
-        -- boneStart = boneEnd
-        -- posStart, angStart = posEnd, angEnd
-        -- end
-        -- end
-        -- if entityStart then
-        -- boneEnd = targetGrabPoint.bone
-        -- posEnd, angEnd = targetGrabPoint.pos, targetGrabPoint.ang
-        -- end
-        -- grabPoints = targetGrabPoint
-        -- end
-        -- --end
-        -- local vm = g_VR.viewModel
-        g_VR.tracking.pose_righthand.pos = rhpos + lpp
-        g_VR.tracking.pose_righthand.ang = newang
-        g_VR.tracking.pose_lefthand.pos = lhpos + lpp
-        g_VR.tracking.pose_lefthand.ang = lhang
+        vrmod.SetLeftHandPose(lhpos + lpp, lhang)
     end)
 
-    -- local tickrate = GetConVar("vrmod_net_tickrate"):GetInt()
-    -- hook.Add("Tick","yrsysss",function()
-    -- local updates = false
-    -- for handWPos,handWAng in pairs(g_VR) do
-    -- StartLerpingToGrabPoint( vm:LookupBone("ValveBiped.Bip01_L_Hand").bone)
-    -- updates = true
-    -- end
-    -- if not updates then
-    -- hook.Remove("Tick","yrsysss")
-    -- --print("position update hook removed")
-    -- end
-    -- end)
     hook.Add("VRMod_Pickup", "avr_pickup", function(ply, ent)
         local leftent = g_VR.heldEntityLeft
         local rightent = g_VR.heldEntityRight
@@ -413,7 +349,7 @@ if CLIENT then
         end
 
         if rightent and rightent ~= lastheldentright then
-            local pos, ang = g_VR.tracking.pose_righthand.pos, g_VR.tracking.pose_righthand.ang
+            local pos, ang = vrmod.GetRightHandPose(ply)
             net.Start("avr_pose")
             net.WriteVector(pos)
             net.WriteAngle(ang)
