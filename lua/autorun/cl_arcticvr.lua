@@ -61,30 +61,6 @@ if CLIENT then
         end
     end)
 
-    -- hook.Add("PreDrawOpaqueRenderables", "avr_rtscope", function( depth, sky )
-    --     if sky then return end
-    --     local wpn = LocalPlayer():GetActiveWeapon()
-    --     local left = false
-    --     if g_VR.view.origin == g_VR.eyePosLeft then
-    --         left = true
-    --     end
-    -- end)
-    -- tracking:
-    -- 		hmd:
-    -- 				ang	=	0.044 17.125 0.909
-    -- 				angvel	=	0.239 0.293 0.023
-    -- 				pos	=	-39.197601 -2076.995850 31.977652
-    -- 				vel	=	-0.000745 -0.000299 0.001139
-    -- 		pose_lefthand:
-    -- 				ang	=	36.343 -6.817 7.154
-    -- 				angvel	=	1.403 -0.268 -0.126
-    -- 				pos	=	-38.255795 -2056.585693 33.242390
-    -- 				vel	=	-0.001984 -0.002926 0.000619
-    -- 		pose_righthand:
-    -- 				ang	=	37.672 3.286 3.465
-    -- 				angvel	=	0.906 0.030 -0.060
-    -- 				pos	=	-39.915737 -2066.740967 33.302757
-    -- 				vel	=	-0.001716 -0.001425 0.000653
     local function divvec(vec, div)
         vec[1] = vec[1] / div
         vec[2] = vec[2] / div
@@ -112,10 +88,15 @@ if CLIENT then
     end
 
     local lastpos = nil
-    hook.Add("VRMod_PreRender", "avr_guntracking", function()
+    local function AVR_GunTracking()
         local wpn = LocalPlayer():GetActiveWeapon()
         local lpp = g_VR.origin
-        if not wpn.ArcticVR then return end
+        if not wpn.ArcticVR then
+            vrmod.suppressViewModelUpdates = false
+            return
+        end
+
+        vrmod.suppressViewModelUpdates = true
         if not g_VR.tracking.pose_lefthand then return end
         local recoil = (wpn.RecoilBalance - wpn.RecoilAngles:Up()) * wpn.RecoilBlowback
         local dostab = wpn:IsStabilizing()
@@ -133,13 +114,13 @@ if CLIENT then
         lastpos = lastpos or lpp
         local diff = lpp - lastpos
         lastpos = lpp
-        local lhpos = vrmod.GetLeftHandPos() - lpp
-        local lhang = vrmod.GetLeftHandAng()
-        local rhpos = vrmod.GetRightHandPos() - lpp
-        local rhang = vrmod.GetRightHandAng()
+        local lhpos = g_VR.tracking.pose_lefthand.pos - lpp
+        local lhang = g_VR.tracking.pose_lefthand.ang
+        local rhpos = g_VR.tracking.pose_righthand.pos - lpp
+        local rhang = g_VR.tracking.pose_righthand.ang
         local origroll = rhang[3]
         -- record actual current position in stability frames.
-        local sf = wpn.StabilityFrames
+        local sf = 1
         local wp = wpn.WeightPenaltyFrames + wpn:GetBuffAdditive("Buff_WeightPenaltyFrames")
         sf = sf + wpn:GetBuffAdditive("Buff_StabilityFrames")
         sf = sf + math.floor(ArcticVR:GetStockDelta() * 3)
@@ -218,10 +199,11 @@ if CLIENT then
             end
 
             if twohand then
-                local pos = lhpos + lpp
-                local ang = lhang
-                vrmod.SetLeftHandPose(pos, ang)
+                g_VR.tracking.pose_lefthand.pos = lhpos + lpp
+                g_VR.tracking.pose_lefthand.ang = lhang
             end
+
+            vrmod.utils.UpdateViewModelPos(rhpos + lpp, rhang)
             return
         end
 
@@ -291,7 +273,7 @@ if CLIENT then
         lhpos = lhpos + pang:Up() * fg_offset[3]
         if wpn.PumpAction then
             local spos = WorldToLocal(lhpos, ang_offset, rhpos, newang)
-            local locpos = WorldToLocal(vrmod.GetLeftHandPos() - lpp, ang_offset, rhpos, newang)
+            local locpos = WorldToLocal(g_VR.tracking.pose_lefthand.pos - lpp, ang_offset, rhpos, newang)
             if wpn.SlideDir[1] == 0 then
                 locpos[3] = 0
             else
@@ -332,9 +314,14 @@ if CLIENT then
             lhpos = LocalToWorld(spos, ang_offset, rhpos, newang)
         end
 
-        vrmod.SetLeftHandPose(lhpos + lpp, lhang)
-    end)
+        g_VR.tracking.pose_righthand.pos = rhpos + lpp
+        g_VR.tracking.pose_righthand.ang = newang
+        g_VR.tracking.pose_lefthand.pos = lhpos + lpp
+        g_VR.tracking.pose_lefthand.ang = lhang
+        vrmod.utils.UpdateViewModelPos(rhpos + lpp, newang)
+    end
 
+    hook.Add("VRMod_Tracking", "avr_guntracking", AVR_GunTracking)
     hook.Add("VRMod_Pickup", "avr_pickup", function(ply, ent)
         local leftent = g_VR.heldEntityLeft
         local rightent = g_VR.heldEntityRight
@@ -358,11 +345,6 @@ if CLIENT then
             net.SendToServer()
         end
 
-        -- if rightent and rightent.ArcticVRMagazine then
-        --     if !g_VR.input.boolean_left_reload then
-        --         VRMod_Drop(LocalPlayer(), rightent)
-        --     end
-        -- end
         lastheldentright = rightent
         lastheldentleft = leftent
     end)
