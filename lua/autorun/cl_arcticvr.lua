@@ -203,7 +203,7 @@ if CLIENT then
                 g_VR.tracking.pose_lefthand.ang = lhang
             end
 
-            vrmod.utils.UpdateViewModelPos(rhpos + lpp, rhang)
+            vrmod.utils.UpdateViewModelPos(rhpos + lpp, rhang, true)
             return
         end
 
@@ -318,7 +318,7 @@ if CLIENT then
         g_VR.tracking.pose_righthand.ang = newang
         g_VR.tracking.pose_lefthand.pos = lhpos + lpp
         g_VR.tracking.pose_lefthand.ang = lhang
-        vrmod.utils.UpdateViewModelPos(rhpos + lpp, newang)
+        vrmod.utils.UpdateViewModelPos(rhpos + lpp, newang, true)
     end
 
     hook.Add("VRMod_Tracking", "avr_guntracking", AVR_GunTracking)
