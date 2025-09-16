@@ -132,10 +132,10 @@ if CLIENT then
 		local vm = g_VR.viewModel
 		local cv_pinsys = CreateClientConVar("arcticvr_grenade_pin_enable", "1")
 		if cv_pinsys:GetBool() then
-			if g_VR.input.boolean_primaryfire then
+			if g_VR.input.boolean_primaryfire or g_VR.input.boolean_turret then
 				local ammo = LocalPlayer():GetAmmoCount(self.Primary.Ammo)
 				if not self.GrenadeGrabbed and self.NextNadeTime <= CurTime() and ammo > 0 then self.GrenadeGrabbed = true end
-			elseif not g_VR.input.boolean_primaryfire then
+			elseif not g_VR.input.boolean_primaryfire or g_VR.input.boolean_turret then
 				if self.GrenadeGrabbed and self.PinOut or self.GrenadeGrabbed and self.PinModel == "" then
 					self:ReleaseGrenade()
 					self.GrenadeGrabbed = false
@@ -163,10 +163,10 @@ if CLIENT then
 				end
 			end
 		else
-			if g_VR.input.boolean_primaryfire then
+			if g_VR.input.boolean_primaryfire or g_VR.input.boolean_turret then
 				local ammo = LocalPlayer():GetAmmoCount(self.Primary.Ammo)
 				if not self.GrenadeGrabbed and self.NextNadeTime <= CurTime() and ammo > 0 then self.GrenadeGrabbed = true end
-			elseif not g_VR.input.boolean_primaryfire then
+			elseif not g_VR.input.boolean_primaryfire or g_VR.input.boolean_turret then
 				if self.GrenadeGrabbed and not g_VR.input.boolean_right_pickup or self.GrenadeGrabbed and VR.input.boolean_reload then
 					self:ReleaseGrenade()
 					self.GrenadeGrabbed = false
