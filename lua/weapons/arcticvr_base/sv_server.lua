@@ -10,7 +10,7 @@ function SWEP:Holster()
 end
 
 function SWEP:SendWeapon(justowner, full)
-    if justowner and not IsValid(self.Owner) then return end
+    if justowner and not IsValid(self:GetOwner()) then return end
     net.Start("avr_sendatts")
     net.WriteEntity(self)
     net.WriteUInt(table.Count(self.Attachments), 10)
@@ -35,7 +35,7 @@ function SWEP:SendWeapon(justowner, full)
     end
 
     if justowner then
-        net.Send(self.Owner)
+        net.Send(self:GetOwner())
     else
         net.Broadcast()
     end
@@ -45,7 +45,7 @@ function SWEP:VR_Melee(src, vel)
     if CLIENT then return end
     if self.NextMeleeAttack > CurTime() then return end
     if self:GetOwner():IsPlayer() then self:GetOwner():LagCompensation(true) end
-    self.Owner:FireBullets({
+    self:GetOwner():FireBullets({
         Damage = self.MeleeDamage,
         Src = src,
         Dir = vel:GetNormalized(),
@@ -78,17 +78,17 @@ function SWEP:VR_Shoot(src, ang, cycle)
             local tr = util.TraceLine({
                 start = src,
                 endpos = src + sang:Forward() * 50,
-                filter = self.Owner
+                filter = self:GetOwner()
             })
 
             rocket.ExtraProjectileData = self.ExtraProjectileData or {}
             rocket:SetAngles(sang + (self.ProjectileOffset or Angle(0, 0, 0)))
             rocket:SetPos(tr.HitPos)
-            rocket:SetOwner(self.Owner)
+            rocket:SetOwner(self:GetOwner())
             rocket:Spawn()
             rocket:Activate()
-            constraint.NoCollide(self.Owner, rocket, 0, 0)
-            rocket:GetPhysicsObject():SetVelocity(self.Owner:GetAbsVelocity())
+            constraint.NoCollide(self:GetOwner(), rocket, 0, 0)
+            rocket:GetPhysicsObject():SetVelocity(self:GetOwner():GetAbsVelocity())
             rocket:GetPhysicsObject():SetVelocityInstantaneous(ang:Forward() * self.MuzzleVelocity * self:GetBuff("Buff_MuzzleVelocity"))
         else
             local tcol = self:GetAttOverride("OverrideTracerCol") or self.TracerCol
@@ -112,18 +112,18 @@ function SWEP:VR_Shoot(src, ang, cycle)
                         c = tcol,
                         --l = weapon.TracerLen,
                         w = twidth
-                    }, dmgmin, dmgmax, self.MaxRange * self:GetBuff("Buff_MaxRange"), self, self.Owner, self.Penetration * self:GetBuff("Buff_Penetration"), self.ShootCallback)
+                    }, dmgmin, dmgmax, self.MaxRange * self:GetBuff("Buff_MaxRange"), self, self:GetOwner(), self.Penetration * self:GetBuff("Buff_Penetration"), self.ShootCallback)
                 else
                     if self:GetOwner():IsPlayer() then self:GetOwner():LagCompensation(true) end
-                    self.Owner:FireBullets({
-                        Attacker = self.Owner,
+                    self:GetOwner():FireBullets({
+                        Attacker = self:GetOwner(),
                         Damage = (dmgmin + dmgmax) / 2,
                         Force = (dmgmin + dmgmax) / 6,
                         Tracer = 1,
                         Spread = 0, --Vector(1, 1, 0) * self.Spread, // dafuq
                         Src = src,
                         Dir = sang:Forward(),
-                        IgnoreEntity = self.Owner,
+                        IgnoreEntity = self:GetOwner(),
                         TracerName = self.TracerOverride
                     })
 
@@ -132,15 +132,15 @@ function SWEP:VR_Shoot(src, ang, cycle)
             else
                 if self:GetOwner():IsPlayer() then self:GetOwner():LagCompensation(true) end
                 if not ArcticVR.IsPhysicalBullets() then
-                    self.Owner:FireBullets({
-                        Attacker = self.Owner,
+                    self:GetOwner():FireBullets({
+                        Attacker = self:GetOwner(),
                         Damage = (dmgmin + dmgmax) / 2,
                         Force = (dmgmin + dmgmax) / 6,
                         Tracer = 1,
                         Spread = 0,
                         Src = src,
                         Dir = sang:Forward(),
-                        IgnoreEntity = self.Owner,
+                        IgnoreEntity = self:GetOwner(),
                         TracerName = self.TracerOverride
                     })
 
@@ -150,7 +150,7 @@ function SWEP:VR_Shoot(src, ang, cycle)
                         c = tcol,
                         --l = weapon.TracerLen,
                         w = twidth
-                    }, dmgmin, dmgmax, self.MaxRange * self:GetBuff("Buff_MaxRange"), self, self.Owner, self.Penetration * self:GetBuff("Buff_Penetration"), self.ShootCallback)
+                    }, dmgmin, dmgmax, self.MaxRange * self:GetBuff("Buff_MaxRange"), self, self:GetOwner(), self.Penetration * self:GetBuff("Buff_Penetration"), self.ShootCallback)
                 end
             end
         end

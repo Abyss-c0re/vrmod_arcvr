@@ -146,7 +146,7 @@ function SWEP:DrawLaserSight(lsm, ls)
     local tr = util.TraceLine({
         start = pos,
         endpos = pos + ang:Up() * 40000,
-        filter = self.Owner
+        filter = self:GetOwner()
     })
 
     local hit = tr.HitPos

@@ -121,10 +121,10 @@ end
 
 function SWEP:DispatchSparkEffect()
 	local hit
-	if self.Owner ~= NULL and self.Owner:IsPlayer() then
+	if self:GetOwner() ~= NULL and self:GetOwner():IsPlayer() then
 		hit = util.TraceLine({
-			start = self.Owner:EyePos(),
-			endpos = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 30000,
+			start = self:GetOwner():EyePos(),
+			endpos = self:GetOwner():EyePos() + self:GetOwner():EyeAngles():Forward() * 30000,
 			filter = PortalTrace,
 			mask = MASK_SHOT_PORTAL
 		})
@@ -150,7 +150,7 @@ function SWEP:PrimaryAttack()
 	if not self.CanFirePortal1 or IsValid(self.HoldenProp) then return end
 	self:SetNextPrimaryFire(CurTime() + self.RefireInterval)
 	self:SetNextSecondaryFire(CurTime() + self.RefireInterval)
-	if IsValid(self.Owner) and self.Owner:WaterLevel() >= 3 then
+	if IsValid(self:GetOwner()) and self:GetOwner():WaterLevel() >= 3 then
 		self:PlayFizzleAnimation()
 		return
 	end
@@ -171,7 +171,7 @@ function SWEP:SecondaryAttack()
 	if not self.CanFirePortal2 or IsValid(self.HoldenProp) then return end
 	self:SetNextPrimaryFire(CurTime() + self.RefireInterval)
 	self:SetNextSecondaryFire(CurTime() + self.RefireInterval)
-	if IsValid(self.Owner) and self.Owner:WaterLevel() >= 3 then
+	if IsValid(self:GetOwner()) and self:GetOwner():WaterLevel() >= 3 then
 		self:PlayFizzleAnimation()
 		return
 	end
@@ -189,18 +189,18 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:CreateShootEffect(type)
-	local owner = self.Owner ~= NULL and self.Owner or player.GetAll()[1]
+	local owner = self:GetOwner() ~= NULL and self:GetOwner() or player.GetAll()[1]
 	if SERVER then
 		local tr
 		local source
 		local clr = type == true and Color(255, 150, 0) or Color(0, 150, 255)
-		if self.Owner ~= NULL and self.Owner:IsPlayer() then
+		if self:GetOwner() ~= NULL and self:GetOwner():IsPlayer() then
 			local vec = Vector(12, -2, -3)
-			vec:Rotate(self.Owner:EyeAngles())
-			source = self.Owner:GetShootPos() + vec
+			vec:Rotate(self:GetOwner():EyeAngles())
+			source = self:GetOwner():GetShootPos() + vec
 			tr = util.TraceLine({
-				start = self.Owner:EyePos(),
-				endpos = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 30000,
+				start = self:GetOwner():EyePos(),
+				endpos = self:GetOwner():EyePos() + self:GetOwner():EyeAngles():Forward() * 30000,
 				filter = PortalTrace,
 				mask = MASK_SHOT_PORTAL
 			})
@@ -217,11 +217,11 @@ end
 function SWEP:CanPlacePortal(type)
 	local pass = true
 	local tr
-	if self.Owner ~= NULL and self.Owner:IsPlayer() then
-		--tr = self.Owner:GetEyeTraceNoCursor()
+	if self:GetOwner() ~= NULL and self:GetOwner():IsPlayer() then
+		--tr = self:GetOwner():GetEyeTraceNoCursor()
 		tr = util.TraceLine({
-			start = self.Owner:EyePos(),
-			endpos = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 30000,
+			start = self:GetOwner():EyePos(),
+			endpos = self:GetOwner():EyePos() + self:GetOwner():EyeAngles():Forward() * 30000,
 			filter = PortalTrace,
 			mask = MASK_SHOT_PORTAL
 		})
@@ -269,7 +269,7 @@ function SWEP:PickupProp(ent)
 			net.Start('PORTALGUN_PICKUP_PROP')
 			net.WriteEntity(self)
 			net.WriteEntity(ent)
-			net.Send(self.Owner)
+			net.Send(self:GetOwner())
 		end
 		return true
 	end
@@ -298,31 +298,31 @@ function SWEP:DropProp()
 		net.Start('PORTALGUN_PICKUP_PROP')
 		net.WriteEntity(self)
 		net.WriteEntity(NULL)
-		net.Send(self.Owner)
+		net.Send(self:GetOwner())
 	end
 	return true
 end
 
 function SWEP:Think()
-	if self.Owner then
+	if self:GetOwner() then
 		-- SKIN FUNC
-		self:SetSkin(self.Owner:GetNWInt('PORTALGUNTYPE'))
+		self:SetSkin(self:GetOwner():GetNWInt('PORTALGUNTYPE'))
 		-- HOLDING FUNC
 		if IsValid(self.HoldenProp) then
 			local tr = util.TraceLine({
-				start = self.Owner:EyePos(),
-				endpos = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * -30,
-				filter = {self.Owner, self.HoldenProp}
+				start = self:GetOwner():EyePos(),
+				endpos = self:GetOwner():EyePos() + self:GetOwner():EyeAngles():Forward() * -30,
+				filter = {self:GetOwner(), self.HoldenProp}
 			})
 
 			self.HoldenProp:SetPos(tr.HitPos - self.HoldenProp:OBBCenter())
-			self.HoldenProp:SetAngles(self.Owner:EyeAngles())
+			self.HoldenProp:SetAngles(self:GetOwner():EyeAngles())
 		elseif not IsValid(self.HoldenProp) and self.HoldenProp ~= NULL then
 			self:DropProp()
 		end
 
-		if self.Owner:KeyDown(IN_USE) and self.NextAllowedPickup < CurTime() and SERVER then
-			local ply = self.Owner
+		if self:GetOwner():KeyDown(IN_USE) and self.NextAllowedPickup < CurTime() and SERVER then
+			local ply = self:GetOwner()
 			self.NextAllowedPickup = CurTime() + 0.4
 			local tr = util.TraceLine({
 				start = ply:EyePos(),
@@ -342,7 +342,7 @@ function SWEP:Think()
 			-- PORTAL PICKUP FUNC
 			for i, v in pairs(ents.FindInSphere(tr.HitPos, 5)) do
 				if string.find(v:GetClass(), 'portalgun_portal_') then
-					local distprec = 1 - v:GetPos():Distance(self.Owner:EyePos()) / 150 -- get distance
+					local distprec = 1 - v:GetPos():Distance(self:GetOwner():EyePos()) / 150 -- get distance
 					local portal = v:GetLinkedPortal()
 					if not IsValid(portal) then -- no portal - can't pickup
 						return
@@ -372,13 +372,13 @@ end
 
 function SWEP:FirePortal(type)
 	local ent
-	local owner = self.Owner ~= NULL and self.Owner or player.GetAll()[1]
+	local owner = self:GetOwner() ~= NULL and self:GetOwner() or player.GetAll()[1]
 	if SERVER then
 		local tr
-		if self.Owner ~= NULL and self.Owner:IsPlayer() then
+		if self:GetOwner() ~= NULL and self:GetOwner():IsPlayer() then
 			tr = util.TraceLine({
-				start = self.Owner:EyePos(),
-				endpos = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 30000,
+				start = self:GetOwner():EyePos(),
+				endpos = self:GetOwner():EyePos() + self:GetOwner():EyeAngles():Forward() * 30000,
 				filter = PortalTrace,
 				mask = MASK_SHOT_PORTAL
 			})
@@ -534,7 +534,7 @@ function SWEP:FirePortal(type)
 end
 
 function SWEP:RemoveSelectedPortal(type)
-	local owner = self.Owner ~= NULL and self.Owner or player.GetAll()[1]
+	local owner = self:GetOwner() ~= NULL and self:GetOwner() or player.GetAll()[1]
 	for i, v in pairs(ents.GetAll()) do
 		if IsValid(v) and type == true and owner:GetNWEntity('PORTALGUN_PORTALS_RED') == v then
 			SafeRemoveEntity(v)
@@ -545,7 +545,7 @@ function SWEP:RemoveSelectedPortal(type)
 end
 
 function SWEP:Reload()
-	local owner = self.Owner ~= NULL and self.Owner or player.GetAll()[1]
+	local owner = self:GetOwner() ~= NULL and self:GetOwner() or player.GetAll()[1]
 	if SERVER then
 		self:RemoveSelectedPortal(true)
 		self:RemoveSelectedPortal(false)
@@ -558,7 +558,7 @@ function SWEP:Reload()
 end
 
 function SWEP:OnRemove()
-	local owner = self.Owner ~= NULL and self.Owner or player.GetAll()[1]
+	local owner = self:GetOwner() ~= NULL and self:GetOwner() or player.GetAll()[1]
 	if SERVER and owner and not owner:Alive() then
 		self:RemoveSelectedPortal(true)
 		self:RemoveSelectedPortal(false)
@@ -616,11 +616,11 @@ local crosshair_blue = Material('hud/portalgun_crosshair_left.png')
 function SWEP:DrawHUD()
 	surface.SetDrawColor(255, 255, 255, 255)
 	local current = crosshair_empty
-	if self.Owner:GetNWEntity('PORTALGUN_PORTALS_RED') ~= NULL and self.Owner:GetNWEntity('PORTALGUN_PORTALS_BLUE') ~= NULL or self.Owner:GetNWEntity('PORTALGUN_PORTALS_AT1') ~= NULL and self.Owner:GetNWEntity('PORTALGUN_PORTALS_AT2') ~= NULL or self.Owner:GetNWEntity('PORTALGUN_PORTALS_PB1') ~= NULL and self.Owner:GetNWEntity('PORTALGUN_PORTALS_PB2') ~= NULL then
+	if self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_RED') ~= NULL and self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_BLUE') ~= NULL or self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_AT1') ~= NULL and self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_AT2') ~= NULL or self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_PB1') ~= NULL and self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_PB2') ~= NULL then
 		current = crosshair_full
-	elseif self.Owner:GetNWEntity('PORTALGUN_PORTALS_BLUE') ~= NULL and self.Owner:GetNWEntity('PORTALGUN_PORTALS_RED') == NULL or self.Owner:GetNWEntity('PORTALGUN_PORTALS_AT1') ~= NULL and self.Owner:GetNWEntity('PORTALGUN_PORTALS_AT2') == NULL or self.Owner:GetNWEntity('PORTALGUN_PORTALS_PB1') ~= NULL and self.Owner:GetNWEntity('PORTALGUN_PORTALS_PB2') == NULL then
+	elseif self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_BLUE') ~= NULL and self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_RED') == NULL or self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_AT1') ~= NULL and self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_AT2') == NULL or self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_PB1') ~= NULL and self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_PB2') == NULL then
 		current = crosshair_blue
-	elseif self.Owner:GetNWEntity('PORTALGUN_PORTALS_RED') ~= NULL and self.Owner:GetNWEntity('PORTALGUN_PORTALS_BLUE') == NULL or self.Owner:GetNWEntity('PORTALGUN_PORTALS_AT1') ~= NULL and self.Owner:GetNWEntity('PORTALGUN_PORTALS_AT2') == NULL or self.Owner:GetNWEntity('PORTALGUN_PORTALS_PB1') ~= NULL and self.Owner:GetNWEntity('PORTALGUN_PORTALS_PB2') == NULL then
+	elseif self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_RED') ~= NULL and self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_BLUE') == NULL or self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_AT1') ~= NULL and self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_AT2') == NULL or self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_PB1') ~= NULL and self:GetOwner():GetNWEntity('PORTALGUN_PORTALS_PB2') == NULL then
 		current = crosshair_orange
 	else
 		current = crosshair_empty
@@ -680,5 +680,5 @@ function SWEP:ViewModelDrawn(vm)
 		render.DrawSprite(vm:GetPos() + v3, size, size, Color(255, 200, 0))
 	end
 
-	vm:SetSkin(self.Owner:GetNWInt('PORTALGUNTYPE'))
+	vm:SetSkin(self:GetOwner():GetNWInt('PORTALGUNTYPE'))
 end

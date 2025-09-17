@@ -577,14 +577,14 @@ function SWEP:PlayNetworkedSound(sindex, soundn)
         local spath = self[sname]
         if CLIENT then
             local vm = g_VR.viewModel
-            if chan == CHAN_WEAPON then vm = self.Owner end
+            if chan == CHAN_WEAPON then vm = self:GetOwner() end
             vm:EmitSound(spath, vol, 100, 1, chan)
             if sname == "" then return end
             net.Start("avr_playsound")
             net.WriteUInt(sindex, 8)
             net.SendToServer()
         else
-            SuppressHostEvents(self.Owner)
+            SuppressHostEvents(self:GetOwner())
             self:EmitSound(spath, vol, 100, 1, chan)
             SuppressHostEvents(NULL)
         end

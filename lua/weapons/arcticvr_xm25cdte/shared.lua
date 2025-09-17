@@ -115,7 +115,7 @@ if CLIENT then
         local lt = util.TraceLine({
             start = pos,
             endpos = pos + ang:Forward() * 32000,
-            filter = self.Owner
+            filter = self:GetOwner()
         })
 
         local crange = (lt.HitPos - pos):Length()
