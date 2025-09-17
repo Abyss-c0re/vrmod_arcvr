@@ -13,7 +13,7 @@ function SWEP:VRInput(action, state)
     local foregripbone = 0
     local gripkey = "boolean_left_secondaryfire"
     if self.BoneIndices.foregrip then foregripbone = self.BoneIndices.foregrip end
-    if self.Firemode == 1 or self.TwoStageTrigger or self.NeedAnotherTriggerPull then if action == "boolean_primaryfire" and state then if self.NextPrimaryFire < CurTime() then self:VR_PrimaryAttack() end end end
+    if self.Firemode == 1 or self.TwoStageTrigger or self.NeedAnotherTriggerPull then if (action == "boolean_primaryfire" or action == "boolean_turret") and state then if self.NextPrimaryFire < CurTime() then self:VR_PrimaryAttack() end end end
     if action == "boolean_secondaryfire" and state then
         if self.BreakAction then
             self:OpenChambers()

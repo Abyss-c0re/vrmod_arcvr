@@ -10,7 +10,7 @@ function SWEP:VRThink()
     local vec1 = Vector(1, 1, 1)
     local vec0 = vec1 * 0
     if g_VR.input.boolean_primaryfire or g_VR.input.boolean_turret then
-        if not (self.Firemode == 1 or self.NeedAnotherTriggerPull) then if not self.TwoStageTrigger or g_VR.input.vector1_primaryfire >= 0.9 then self:VR_PrimaryAttack() end end
+        if not (self.Firemode == 1 or self.NeedAnotherTriggerPull) then if not self.TwoStageTrigger then self:VR_PrimaryAttack() end end
     else
         self.BurstLength = 0
     end
