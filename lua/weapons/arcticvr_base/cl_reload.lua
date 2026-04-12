@@ -158,37 +158,21 @@ function SWEP:InsertMagazineBehaviour()
     g_VR.heldEntityLeft.RenderOverride = function(a) return end
     g_VR.heldEntityLeft = nil
     -- Enforce NoDraw on active weapon
-    if not GetConVar("vrmod_useworldmodels"):GetBool() then
-        local weapon = LocalPlayer():GetActiveWeapon()
-        if IsValid(weapon) then weapon:SetNoDraw(true) end
-    end
+    local weapon = LocalPlayer():GetActiveWeapon()
+    if IsValid(weapon) then weapon:SetNoDraw(true) end
 end
 
 function SWEP:PostDrawViewModel()
     local vm = g_VR.viewModel
     if not vm then return end
     if not IsValid(vm) then return end
-    if ArcticVR.CSMagazine and IsValid(ArcticVR.CSMagazine) then
-        --     self.CSMagazineInsertionTime = math.Approach(self.CSMagazineInsertionTime, 1, FrameTime() * 0.25)
-        --     local locpos, locang = LocalToWorld(self.MagazineOffset + g_VR.viewModelInfo.arcticvr_m9.offsetPos,
-        --         self.MagazineAngleOffset + g_VR.viewModelInfo.arcticvr_m9.offsetAng,
-        --         g_VR.tracking.pose_righthand.pos,
-        --         g_VR.tracking.pose_righthand.ang)
-        --     self.CSMagazine:SetPos(locpos)
-        --     self.CSMagazine:SetAngles(locang)
-        --     self.CSMagazine:SetRenderOrigin(locpos)
-        --     self.CSMagazine:SetRenderAngles(locang)
-        ArcticVR.CSMagazine:DrawModel()
-    end
-
+    if ArcticVR.CSMagazine and IsValid(ArcticVR.CSMagazine) then ArcticVR.CSMagazine:DrawModel() end
     if ArcticVR.Overdraw then return end
     self:HolosightFunc()
     self:LaserSightFunc()
     self:AttRender()
-    if not GetConVar("vrmod_useworldmodels"):GetBool() then
-        local weapon = LocalPlayer():GetActiveWeapon()
-        if IsValid(weapon) then weapon:SetNoDraw(true) end
-    end
+    local weapon = LocalPlayer():GetActiveWeapon()
+    if IsValid(weapon) then weapon:SetNoDraw(true) end
 end
 
 function SWEP:OpenChambers()
