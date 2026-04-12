@@ -61,17 +61,29 @@ end
 
 function SWEP:VR_Shoot(src, ang, cycle)
     if CLIENT then return end
-    cycle = cycle or true
-    local num = self:GetAttOverride("Override_Num") or self.Num
-    local shootsys = CreateClientConVar("arcticvr_shootsys", "1", true, FCVAR_ARCHIVE)
+    local num = self:GetAttOverride("Override_Num") or self.Num or 1
+    -- === SAFE SPREAD CALCULATION (already fixed the previous crash) ===
+    local function GetSpreadScalar(val)
+        if not val then return 0 end
+        if isvector(val) then
+            return (val.x + val.y) / 2 -- average horizontal/vertical spread
+        end
+        return tonumber(val) or 0
+    end
+
+    local baseSpread = GetSpreadScalar(self.Spread)
+    local buffSpread = GetSpreadScalar(self:GetBuff("Buff_Spread") or 1)
+    local spreadAmount = baseSpread * 0.1 * buffSpread
+    -- ==================================================================
+    local shootsys = GetConVar("arcticvr_shootsys")
     for i = 1, num do
-        local sang = ang + AngleRand() * self.Spread * 0.1 * self:GetBuff("Buff_Spread")
-        local se = self.ShootEntity
-        se = self:GetAttOverride("Override_ShootEntity") or se
+        local sang = ang + AngleRand() * spreadAmount
+        local se = self:GetAttOverride("Override_ShootEntity") or self.ShootEntity
         if se then
+            -- === Projectile / Rocket mode ===
             local rocket = ents.Create(se)
             if not rocket:IsValid() then
-                print("!!! INVALID ROUND " .. se)
+                print("!!! INVALID ROUND " .. tostring(se))
                 return false
             end
 
@@ -88,29 +100,28 @@ function SWEP:VR_Shoot(src, ang, cycle)
             rocket:Spawn()
             rocket:Activate()
             constraint.NoCollide(self:GetOwner(), rocket, 0, 0)
-            rocket:GetPhysicsObject():SetVelocity(self:GetOwner():GetAbsVelocity())
-            rocket:GetPhysicsObject():SetVelocityInstantaneous(ang:Forward() * self.MuzzleVelocity * self:GetBuff("Buff_MuzzleVelocity"))
+            local phys = rocket:GetPhysicsObject()
+            if IsValid(phys) then
+                phys:SetVelocity(self:GetOwner():GetAbsVelocity())
+                phys:SetVelocityInstantaneous(ang:Forward() * self.MuzzleVelocity * self:GetBuff("Buff_MuzzleVelocity"))
+            end
         else
+            -- === Bullet mode ===
             local tcol = self:GetAttOverride("OverrideTracerCol") or self.TracerCol
             local twidth = self.TracerWidth + self:GetBuffAdditive("Buff_TracerWidth")
             local dmgmin = self.DamageMin * self:GetBuff("Buff_DamageMin")
             local dmgmax = self.DamageMax * self:GetBuff("Buff_DamageMax")
             local sniperized = dmgmin > dmgmax
             if sniperized and self:GetAttOverride("DeSniperize") then
-                local a = dmgmin
-                dmgmin = dmgmax
-                dmgmax = a
+                dmgmin, dmgmax = dmgmax, dmgmin
             elseif not sniperized and self:GetAttOverride("Sniperize") then
-                local a = dmgmin
-                dmgmin = dmgmax
-                dmgmax = a
+                dmgmin, dmgmax = dmgmax, dmgmin
             end
 
             if shootsys:GetBool() then
                 if ArcticVR.IsPhysicalBullets() then
                     ArcticVR:ShootPhysicalBullet(src, sang, self.MuzzleVelocity * self:GetBuff("Buff_MuzzleVelocity"), {
                         c = tcol,
-                        --l = weapon.TracerLen,
                         w = twidth
                     }, dmgmin, dmgmax, self.MaxRange * self:GetBuff("Buff_MaxRange"), self, self:GetOwner(), self.Penetration * self:GetBuff("Buff_Penetration"), self.ShootCallback)
                 else
@@ -120,7 +131,7 @@ function SWEP:VR_Shoot(src, ang, cycle)
                         Damage = (dmgmin + dmgmax) / 2,
                         Force = (dmgmin + dmgmax) / 6,
                         Tracer = 1,
-                        Spread = 0, --Vector(1, 1, 0) * self.Spread, // dafuq
+                        Spread = Vector(0, 0, 0), -- ← FIXED: must be a Vector, not a number
                         Src = src,
                         Dir = sang:Forward(),
                         IgnoreEntity = self:GetOwner(),
@@ -137,7 +148,7 @@ function SWEP:VR_Shoot(src, ang, cycle)
                         Damage = (dmgmin + dmgmax) / 2,
                         Force = (dmgmin + dmgmax) / 6,
                         Tracer = 1,
-                        Spread = 0,
+                        Spread = Vector(0, 0, 0), -- ← FIXED: must be a Vector, not a number
                         Src = src,
                         Dir = sang:Forward(),
                         IgnoreEntity = self:GetOwner(),
@@ -148,7 +159,6 @@ function SWEP:VR_Shoot(src, ang, cycle)
                 else
                     ArcticVR:ShootPhysicalBullet(src, sang, self.MuzzleVelocity * self:GetBuff("Buff_MuzzleVelocity"), {
                         c = tcol,
-                        --l = weapon.TracerLen,
                         w = twidth
                     }, dmgmin, dmgmax, self.MaxRange * self:GetBuff("Buff_MaxRange"), self, self:GetOwner(), self.Penetration * self:GetBuff("Buff_Penetration"), self.ShootCallback)
                 end
