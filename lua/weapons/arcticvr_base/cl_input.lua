@@ -46,13 +46,13 @@ function SWEP:VRInput(action, state)
     end
 
     if action == "boolean_left_pickup" and state then
-        if self.BeltFed and not self.BeltGrabbed and self.LoadedRounds > 0 and math.abs(self.DustCoverPos) >= self.DustCoverMinimums then
+        if self.BeltFed and not self.BeltGrabbed and self.LoadedRounds > 0 then
             if self.Magazine then
                 local magtbl = ArcticVR.MagazineTable[self.Magazine]
-                if magtbl.IsBeltBox then
-                    local bsbone = self.BoneIndices.beltstart
-                    if self.BeltAmountIn == self.BeltBullets then bsbone = self.BoneIndices.belttarget end
-                    if self:LeftHandInMaxs(bsbone, self.BeltMins, self.BeltMaxs) then
+                if magtbl and magtbl.IsBeltBox then
+                    -- Use box bone (same as magazine eject) for reliable hit detection
+                    local beltbone = self.BoneIndices.box or self.BoneIndices.beltstart
+                    if self:LeftHandInMaxs(beltbone, self.BeltMins, self.BeltMaxs) then
                         self.BeltGrabbed = true
                         self:PlayNetworkedSound(nil, "BeltPullSound")
                         return
@@ -62,7 +62,7 @@ function SWEP:VRInput(action, state)
         end
     elseif not state then
         if self.BeltGrabbed then
-            if self.BeltAmountIn < self.BeltBullets then
+            if self.BeltAmountIn < (self.BeltBullets or 16) then
                 self.BeltAmountIn = 0
                 self:PlayNetworkedSound(nil, "BeltOutSound")
             else
@@ -74,6 +74,7 @@ function SWEP:VRInput(action, state)
         end
     end
 
+    --
     if action == "boolean_left_pickup" and state then
         if self.DustCover and not self.DustCoverGrabbed then
             if self:LeftHandInMaxs(self.BoneIndices.dustcover_grip, self.DustCoverMins, self.DustCoverMaxs) then
@@ -199,13 +200,6 @@ function SWEP:VRInput(action, state)
         dist = 32 -- compensate for shit bones
     end
 
-    --Anniversaryzone
-    --floatingpouchdiststart
-    -- pouchsize = GetConVar("arcticvr_pouchsize"):GetFloat()
-    -- if GetConVar("vrmod_floatinghands"):GetBool() or GetConVar("arcticvr_infpouch"):GetBool() then
-    -- pouchsize = 99999
-    -- end
-    --floatingpouchdistend
     if g_VR.tracking.pose_lefthand.pos:DistToSqr(pouch) < dist * dist and not self.ForegripGrabbed then
         if action == "boolean_left_pickup" and state then
             if self.NextCanSpawnMagTime > CurTime() then return end
@@ -231,30 +225,4 @@ function SWEP:VRInput(action, state)
             end
         end
     end
-    --pes pouch test
-    -- --Anniversaryzone
-    -- if GetConVar("arcticvr_weppouch"):GetBool() then
-    -- local weppouchbone = "ValveBiped.Bip01_Spine4"
-    -- local weppouchsize = GetConVar("arcticvr_hybridpouchdist"):GetFloat()
-    -- local weppouchdist = g_VR.eyePosRight
-    -- if (LocalPlayer():LookupBone(weppouchbone) && LocalPlayer():GetBoneMatrix(LocalPlayer():LookupBone(weppouchbone))) then
-    -- weppouchdist = LocalToWorld(Vector(3,3,0), Angle(0,0,0),
-    -- LocalPlayer():GetBoneMatrix(LocalPlayer():LookupBone(weppouchbone)):GetTranslation(),
-    -- Angle(0,g_VR.characterYaw,0))
-    -- if g_VR.tracking.pose_righthand.pos:DistToSqr(weppouchdist) < (weppouchsize * weppouchsize) then
-    -- if action == "boolean_right_pickup" and state then
-    -- LocalPlayer():ConCommand("slot3")
-    -- elseif action == "boolean_right_pickup" and  !state then
-    -- if g_VR.tracking.pose_righthand.pos:DistToSqr(weppouchdist) < (weppouchsize * weppouchsize) then
-    -- LocalPlayer():ConCommand("slot1")
-    -- return
-    -- end
-    -- end
-    -- end
-    -- end
-    -- end
-    -- --pes pouch end
-    -- if action == "boolean_left_pickup" and state then
-    -- -- self:AttachmentBehaviour(true)
-    -- end
 end
