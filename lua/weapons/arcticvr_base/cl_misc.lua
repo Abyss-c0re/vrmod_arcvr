@@ -95,30 +95,24 @@ function SWEP:GripForegrip()
 end
 
 function SWEP:LeftHandInMaxs(bone, mins, maxs)
-    local boneMatrix
+    -- Workshop report: nil bone / nil tracking → Lua error spam + half-second hitch every button
+    if bone == nil or mins == nil or maxs == nil then return false end
     local vm = g_VR.viewModel
-    if cv_lefthandmax_mode:GetBool() then
-        if not vm then return end
-        if not IsValid(vm) then return end
-        if vm:GetBoneMatrix(bone) == nil then return end
-        -- vm:WorldToLocal(vm:GetBonePosition(bone), Angle(0, 0, 0))
-        local tl = Vector(3.5, -1.5, 1.2)
-        -- Vector(3.5,-1.5,1.2)
-        -- --Anniversary zone
-        local boneMatrix = vm:GetBoneMatrix(bone)
-        if not boneMatrix then return false end
-        -- --Anniversary zone
-        local pos = WorldToLocal(LocalToWorld(tl, Angle(0, 0, 0), g_VR.tracking.pose_lefthand.pos, g_VR.tracking.pose_lefthand.ang), Angle(0, 0, 0), boneMatrix:GetTranslation(), boneMatrix:GetAngles())
-        if pos.x > mins[1] and pos.x < maxs[1] and pos.y > mins[2] and pos.y < maxs[2] and pos.z > mins[3] and pos.z < maxs[3] then return true end
-        return false
-    else
-        if not vm then return end
-        if not IsValid(vm) then return end
-        local tl = Vector(3.5, -1.5, 1.2)
-        local pos = WorldToLocal(LocalToWorld(tl, Angle(0, 0, 0), g_VR.tracking.pose_lefthand.pos, g_VR.tracking.pose_lefthand.ang), Angle(0, 0, 0), vm:GetBoneMatrix(bone):GetTranslation(), vm:GetBoneMatrix(bone):GetAngles())
-        if pos.x > mins[1] and pos.x < maxs[1] and pos.y > mins[2] and pos.y < maxs[2] and pos.z > mins[3] and pos.z < maxs[3] then return true end
-        return false
-    end
+    if not IsValid(vm) then return false end
+    local track = g_VR.tracking and g_VR.tracking.pose_lefthand
+    if not track or not track.pos or not track.ang then return false end
+
+    local boneMatrix = vm:GetBoneMatrix(bone)
+    if not boneMatrix then return false end
+
+    local tl = Vector(3.5, -1.5, 1.2)
+    local handWorld = LocalToWorld(tl, Angle(0, 0, 0), track.pos, track.ang)
+    local pos = WorldToLocal(handWorld, Angle(0, 0, 0), boneMatrix:GetTranslation(), boneMatrix:GetAngles())
+    if not pos then return false end
+
+    return pos.x > mins[1] and pos.x < maxs[1]
+        and pos.y > mins[2] and pos.y < maxs[2]
+        and pos.z > mins[3] and pos.z < maxs[3]
 end
 
 function SWEP:PositionInMaxs(pos, poss, mins, maxs)

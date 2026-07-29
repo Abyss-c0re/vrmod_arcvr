@@ -310,19 +310,22 @@ if SERVER then
         local ang = net.ReadAngle()
         local timertime = 0
         local wpn = ply:GetActiveWeapon()
-        if not wpn.ArcticVR then return end
-        for k, v in pairs(g_VR[ply:SteamID()].heldItems) do
-            if v.left then return end
+        if not IsValid(ply) or not IsValid(wpn) or not wpn.ArcticVR then return end
+        local sid = ply:SteamID()
+        if not g_VR[sid] then return end
+        for k, v in pairs(g_VR[sid].heldItems or {}) do
+            if v.left then return end -- already holding something left
         end
 
         local magid = wpn.DefaultMagazine
-        if wpn:GetAttOverride("MagExtender") then if wpn.ExtendedMagazine then magid = wpn.ExtendedMagazine end end
-        if wpn:GetAttOverride("MagReducer") then
+        if wpn.GetAttOverride and wpn:GetAttOverride("MagExtender") then if wpn.ExtendedMagazine then magid = wpn.ExtendedMagazine end end
+        if wpn.GetAttOverride and wpn:GetAttOverride("MagReducer") then
             if wpn.ReducedMagazine then magid = wpn.ReducedMagazine end
             if wpn:GetAttOverride("MagExtender") then magid = wpn.DefaultMagazine end
         end
 
         local magtbl = ArcticVR.MagazineTable[magid]
+        if not magtbl then return end
         local cap = magtbl.Capacity
         local ammotype = wpn.Primary.Ammo
         local reserve = ply:GetAmmoCount(ammotype)
@@ -332,10 +335,20 @@ if SERVER then
         ply:SetAmmo(reserve - toload, ammotype)
         mag:SetAngles(ang)
         mag:SetPos(pos)
-        -- local timertime = 0
-        -- if !game.SinglePlayer() then
         timertime = GetConVar("arcticvr_net_magtimertime"):GetFloat()
-        -- end
-        timer.Simple(timertime, function() GrabAndPose(mag, pos, ang, true, ply) end)
+        -- Always attach to LEFT hand. Refresh pose from latest VR frame after the
+        -- short delay so the mag doesn't teleport to a stale pouch/right-hand spot.
+        timer.Simple(timertime, function()
+            if not IsValid(mag) or not IsValid(ply) then return end
+            local handPos, handAng = pos, ang
+            local vr = g_VR[ply:SteamID()]
+            local frame = vr and vr.latestFrame
+            if frame and frame.lefthandPos then
+                -- Network frames store hand poses relative to player origin
+                handPos = LocalToWorld(frame.lefthandPos, Angle(), ply:GetPos(), Angle())
+                handAng = frame.lefthandAng or ang
+            end
+            GrabAndPose(mag, handPos, handAng, true, ply) -- true = left hand always for pouch
+        end)
     end)
 end

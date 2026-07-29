@@ -28,7 +28,19 @@ if CLIENT then
     local lastheldentright = nil
     hook.Add("VRMod_Input", "avr_input", function(action, state)
         local wpn = LocalPlayer():GetActiveWeapon()
-        if wpn.ArcticVR or wpn.ArcticVRNade then wpn:VRInput(action, state) end
+        if not IsValid(wpn) then return end
+        if not (wpn.ArcticVR or wpn.ArcticVRNade) then return end
+        if not g_VR.active or not g_VR.tracking then return end
+        if not isfunction(wpn.VRInput) then return end
+        -- Guard: VRInput hits LeftHandInMaxs heavily; never throw into the input hook
+        local ok, err = pcall(wpn.VRInput, wpn, action, state)
+        if not ok then
+            -- one-line warn only; avoid spamming console every button
+            if not ArcticVR._lastInputErr or ArcticVR._lastInputErr ~= err then
+                ArcticVR._lastInputErr = err
+                ErrorNoHalt("[ArcVR] VRInput: " .. tostring(err) .. "\n")
+            end
+        end
     end)
 
     hook.Add("VRMod_PreRender", "avr_gunthink", function()

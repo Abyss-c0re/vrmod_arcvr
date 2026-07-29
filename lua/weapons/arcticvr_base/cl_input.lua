@@ -200,12 +200,17 @@ function SWEP:VRInput(action, state)
         dist = 32 -- compensate for shit bones
     end
 
-    if g_VR.tracking.pose_lefthand.pos:DistToSqr(pouch) < dist * dist and not self.ForegripGrabbed then
+    local leftTrack = g_VR.tracking and g_VR.tracking.pose_lefthand
+    if not leftTrack or not leftTrack.pos then return end
+
+    if leftTrack.pos:DistToSqr(pouch) < dist * dist and not self.ForegripGrabbed then
         if action == "boolean_left_pickup" and state then
+            -- Already holding something in left — don't spawn another mag onto the wrong hand
+            if IsValid(g_VR.heldEntityLeft) then return end
             if self.NextCanSpawnMagTime > CurTime() then return end
             if LocalPlayer():GetAmmoCount(self.Primary.Ammo) > 0 then
                 net.Start("avr_spawnmag")
-                local pos, ang = g_VR.tracking.pose_lefthand.pos, g_VR.tracking.pose_lefthand.ang
+                local pos, ang = leftTrack.pos, leftTrack.ang
                 net.WriteVector(pos)
                 net.WriteAngle(ang)
                 net.SendToServer()
