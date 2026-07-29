@@ -642,6 +642,13 @@ function SWEP:Cycle(blank)
 
     if self.LoadedRounds <= 0 and self.DisintegratingMagazine then
         self.Magazine = nil
-        if CLIENT then SafeRemoveEntity(ArcticVR.CSMagazine) end
+        if CLIENT then
+            local oldMag = ArcticVR.CSMagazine
+            ArcticVR.CSMagazine = nil
+            if IsValid(oldMag) then
+                oldMag:SetParent(NULL)
+                oldMag:Remove()
+            end
+        end
     end
 end

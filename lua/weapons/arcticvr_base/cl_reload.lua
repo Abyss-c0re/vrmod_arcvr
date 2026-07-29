@@ -22,7 +22,12 @@ function SWEP:EjectMagazine(grab)
 
     net.SendToServer()
     if game.SinglePlayer() then self:PlayNetworkedSound(nil, "MagOutSound") end
-    SafeRemoveEntity(ArcticVR.CSMagazine)
+    local oldMag = ArcticVR.CSMagazine
+    ArcticVR.CSMagazine = nil
+    if IsValid(oldMag) then
+        oldMag:SetParent(NULL)
+        oldMag:Remove()
+    end
     self.Magazine = nil
     self.LoadedRounds = 0
 end
@@ -148,31 +153,68 @@ function SWEP:InsertMagazineBehaviour()
     else
         self.LoadedRounds = leftent.Rounds
         self.Magazine = leftent.Name
-        SafeRemoveEntity(ArcticVR.CSMagazine)
-        ArcticVR.CSMagazine = ClientsideModel(leftent:GetModel())
-        ArcticVR.CSMagazine:SetParent(vm)
-        ArcticVR.CSMagazine:SetNoDraw(true)
-        ArcticVR.CSMagazine:AddEffects(EF_BONEMERGE)
+        -- Visual mag on the gun (bone-merged). Must re-create cleanly every insert —
+        -- SafeRemoveEntity is deferred; clear the global first so a second insert
+        -- never parents to a dying entity or keeps a dead reference.
+        local oldMag = ArcticVR.CSMagazine
+        ArcticVR.CSMagazine = nil
+        if IsValid(oldMag) then
+            oldMag:SetParent(NULL)
+            oldMag:Remove()
+        end
+        if IsValid(vm) then
+            local mdl = leftent:GetModel()
+            if (not mdl or mdl == "") and magtbl and magtbl.Model then
+                mdl = magtbl.Model
+            end
+            if mdl and mdl ~= "" then
+                local csm = ClientsideModel(mdl)
+                if IsValid(csm) then
+                    csm:SetParent(vm)
+                    csm:SetLocalPos(vector_origin)
+                    csm:SetLocalAngles(angle_zero)
+                    -- Match VRDeploy: do NOT SetNoDraw(true) alone — bonemerge draws with parent.
+                    -- Still draw explicitly in PostDrawViewModel for reliability under VRMod.
+                    csm:SetNoDraw(true)
+                    csm:AddEffects(EF_BONEMERGE)
+                    csm:SetupBones()
+                    ArcticVR.CSMagazine = csm
+                end
+            end
+        end
     end
 
-    g_VR.heldEntityLeft.RenderOverride = function(a) return end
+    if IsValid(g_VR.heldEntityLeft) then
+        g_VR.heldEntityLeft.RenderOverride = function() end
+    end
     g_VR.heldEntityLeft = nil
-    -- Enforce NoDraw on active weapon
-    local weapon = LocalPlayer():GetActiveWeapon()
-    if IsValid(weapon) then weapon:SetNoDraw(true) end
+    -- Enforce NoDraw on active weapon world model (not when using world-model VM mode)
+    if not GetConVar("vrmod_useworldmodels"):GetBool() then
+        local weapon = LocalPlayer():GetActiveWeapon()
+        if IsValid(weapon) then weapon:SetNoDraw(true) end
+    end
 end
 
 function SWEP:PostDrawViewModel()
     local vm = g_VR.viewModel
     if not vm then return end
     if not IsValid(vm) then return end
-    if ArcticVR.CSMagazine and IsValid(ArcticVR.CSMagazine) then ArcticVR.CSMagazine:DrawModel() end
+    if ArcticVR.CSMagazine and IsValid(ArcticVR.CSMagazine) then
+        -- Re-parent if the VR viewmodel was recreated (weapon switch / worldModelVM rebuild)
+        if ArcticVR.CSMagazine:GetParent() ~= vm then
+            ArcticVR.CSMagazine:SetParent(vm)
+            ArcticVR.CSMagazine:AddEffects(EF_BONEMERGE)
+        end
+        ArcticVR.CSMagazine:DrawModel()
+    end
     if ArcticVR.Overdraw then return end
     self:HolosightFunc()
     self:LaserSightFunc()
     self:AttRender()
-    local weapon = LocalPlayer():GetActiveWeapon()
-    if IsValid(weapon) then weapon:SetNoDraw(true) end
+    if not GetConVar("vrmod_useworldmodels"):GetBool() then
+        local weapon = LocalPlayer():GetActiveWeapon()
+        if IsValid(weapon) then weapon:SetNoDraw(true) end
+    end
 end
 
 function SWEP:OpenChambers()

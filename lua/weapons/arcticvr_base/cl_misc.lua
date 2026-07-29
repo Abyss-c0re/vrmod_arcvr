@@ -18,17 +18,29 @@ function SWEP:VRDeploy()
         g_VR.closedHandAngles[i] = tmp[15 + i]
     end
 
-    SafeRemoveEntity(ArcticVR.CSMagazine)
+    local oldMag = ArcticVR.CSMagazine
+    ArcticVR.CSMagazine = nil
+    if IsValid(oldMag) then
+        oldMag:SetParent(NULL)
+        oldMag:Remove()
+    end
     SafeRemoveEntity(ArcticVR.SightPiece)
     self:CleanAttModels()
     self:RebuildAttModels()
     self.ForegripGrabbed = false
     if self.Magazine ~= nil then
         local mag = ArcticVR.MagazineTable[self.Magazine]
-        if not mag.Model then return end
-        ArcticVR.CSMagazine = ClientsideModel(mag.Model)
-        ArcticVR.CSMagazine:SetParent(vm)
-        ArcticVR.CSMagazine:AddEffects(EF_BONEMERGE)
+        if not mag or not mag.Model then return end
+        local csm = ClientsideModel(mag.Model)
+        if IsValid(csm) then
+            csm:SetParent(vm)
+            csm:SetLocalPos(vector_origin)
+            csm:SetLocalAngles(angle_zero)
+            csm:SetNoDraw(true)
+            csm:AddEffects(EF_BONEMERGE)
+            csm:SetupBones()
+            ArcticVR.CSMagazine = csm
+        end
     end
 
     for i, k in pairs(self.BoneIndices) do
@@ -50,7 +62,12 @@ function SWEP:VRDeploy()
 end
 
 function SWEP:VRHolster()
-    SafeRemoveEntity(ArcticVR.CSMagazine)
+    local oldMag = ArcticVR.CSMagazine
+    ArcticVR.CSMagazine = nil
+    if IsValid(oldMag) then
+        oldMag:SetParent(NULL)
+        oldMag:Remove()
+    end
     SafeRemoveEntity(ArcticVR.SightPiece)
     self:CleanAttModels()
 end
