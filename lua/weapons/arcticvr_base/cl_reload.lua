@@ -117,7 +117,8 @@ function SWEP:InsertMagazineBehaviour()
             g_VR.heldEntityLeft.RenderOverride = function(a) return end
             g_VR.heldEntityLeft = nil
             -- Enforce NoDraw on active weapon
-            if not GetConVar("vrmod_useworldmodels"):GetBool() then
+            local cvwm = GetConVar("vrmod_useworldmodels")
+            if not (cvwm and cvwm:GetBool()) then
                 local weapon = LocalPlayer():GetActiveWeapon()
                 if IsValid(weapon) then weapon:SetNoDraw(true) end
             end
@@ -189,7 +190,8 @@ function SWEP:InsertMagazineBehaviour()
     end
     g_VR.heldEntityLeft = nil
     -- Enforce NoDraw on active weapon world model (not when using world-model VM mode)
-    if not GetConVar("vrmod_useworldmodels"):GetBool() then
+    local cvwm = GetConVar("vrmod_useworldmodels")
+    if not (cvwm and cvwm:GetBool()) then
         local weapon = LocalPlayer():GetActiveWeapon()
         if IsValid(weapon) then weapon:SetNoDraw(true) end
     end
@@ -208,10 +210,11 @@ function SWEP:PostDrawViewModel()
         ArcticVR.CSMagazine:DrawModel()
     end
     if ArcticVR.Overdraw then return end
-    self:HolosightFunc()
-    self:LaserSightFunc()
-    self:AttRender()
-    if not GetConVar("vrmod_useworldmodels"):GetBool() then
+    if isfunction(self.HolosightFunc) then self:HolosightFunc() end
+    if isfunction(self.LaserSightFunc) then self:LaserSightFunc() end
+    if isfunction(self.AttRender) then self:AttRender() end
+    local cvwm = GetConVar("vrmod_useworldmodels")
+    if not (cvwm and cvwm:GetBool()) then
         local weapon = LocalPlayer():GetActiveWeapon()
         if IsValid(weapon) then weapon:SetNoDraw(true) end
     end
