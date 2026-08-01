@@ -74,6 +74,7 @@ end
 
 function SWEP:UngripForegrip()
     self.ForegripGrabbed = false
+    if g_VR then g_VR.foregripActive = false end
     tmp = self.LeftHandFingerAngles
     for i = 1, 15 do
         g_VR.openHandAngles[i] = tmp[i]
@@ -83,6 +84,7 @@ end
 
 function SWEP:GripForegrip()
     self.ForegripGrabbed = true
+    if g_VR then g_VR.foregripActive = true end
     self.SlideGrabOffset = self.ForegripOffset[1]
     ArcticVR.StabilityFrames = {}
     ArcticVR.StabilityFrameIndex = 1
@@ -94,25 +96,46 @@ function SWEP:GripForegrip()
     end
 end
 
+--- True if left hand is near this weapon's ForegripOffset (RH/gun axes).
+function SWEP:LeftHandNearForegrip(radius)
+    radius = radius or 14
+    local track = g_VR and g_VR.tracking and g_VR.tracking.pose_lefthand
+    local rh = g_VR and g_VR.tracking and g_VR.tracking.pose_righthand
+    if not (track and track.pos and rh and rh.pos and rh.ang) then return false end
+    local off = self.ForegripOffset or Vector(12, -2, 0)
+    local fg = rh.pos + rh.ang:Forward() * off.x + rh.ang:Right() * off.y + rh.ang:Up() * off.z
+    return track.pos:DistToSqr(fg) <= (radius * radius)
+end
+
 function SWEP:LeftHandInMaxs(bone, mins, maxs)
     -- Workshop report: nil bone / nil tracking → Lua error spam + half-second hitch every button
     if bone == nil or mins == nil or maxs == nil then return false end
     local vm = g_VR.viewModel
-    if not IsValid(vm) then return false end
     local track = g_VR.tracking and g_VR.tracking.pose_lefthand
     if not track or not track.pos or not track.ang then return false end
 
-    local boneMatrix = vm:GetBoneMatrix(bone)
-    if not boneMatrix then return false end
+    if IsValid(vm) then
+        pcall(vm.SetupBones, vm)
+        local boneMatrix = vm:GetBoneMatrix(bone)
+        if boneMatrix then
+            local tl = Vector(3.5, -1.5, 1.2)
+            local handWorld = LocalToWorld(tl, Angle(0, 0, 0), track.pos, track.ang)
+            local pos = WorldToLocal(handWorld, Angle(0, 0, 0), boneMatrix:GetTranslation(), boneMatrix:GetAngles())
+            if pos
+                and pos.x > mins[1] and pos.x < maxs[1]
+                and pos.y > mins[2] and pos.y < maxs[2]
+                and pos.z > mins[3] and pos.z < maxs[3]
+            then
+                return true
+            end
+        end
+    end
 
-    local tl = Vector(3.5, -1.5, 1.2)
-    local handWorld = LocalToWorld(tl, Angle(0, 0, 0), track.pos, track.ang)
-    local pos = WorldToLocal(handWorld, Angle(0, 0, 0), boneMatrix:GetTranslation(), boneMatrix:GetAngles())
-    if not pos then return false end
-
-    return pos.x > mins[1] and pos.x < maxs[1]
-        and pos.y > mins[2] and pos.y < maxs[2]
-        and pos.z > mins[3] and pos.z < maxs[3]
+    -- Fallback: bone matrices often missing at input time — use ForegripOffset in RH space
+    if self.TwoHanded and self.ForegripOffset then
+        return self:LeftHandNearForegrip(16)
+    end
+    return false
 end
 
 function SWEP:PositionInMaxs(pos, poss, mins, maxs)
