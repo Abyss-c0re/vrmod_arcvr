@@ -41,17 +41,6 @@ if CLIENT then
         ) then
             return
         end
-        -- Interactive VR menus open (or soft aim / grab): block pouch + slide + FG grips
-        -- so grip never "pouch grabs" when UI has focus blocked / laser not locked.
-        local menuBlocks = g_VR.menuFocus or g_VR.menuGrabActive or g_VR.menuResizeActive
-            or g_VR.menuAiming
-            or (vrmod.MenusBlockWorldGrab and vrmod.MenusBlockWorldGrab())
-        if menuBlocks and (
-            action == "boolean_left_pickup"
-            or action == "boolean_right_pickup"
-        ) then
-            return
-        end
         -- Guard: VRInput hits LeftHandInMaxs heavily; never throw into the input hook
         local ok, err = pcall(wpn.VRInput, wpn, action, state)
         if not ok then
