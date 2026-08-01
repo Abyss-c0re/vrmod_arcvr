@@ -119,11 +119,24 @@ function SWEP:VRInput(action, state)
         end
     end
 
-    -- Two-hand foregrip (bone OBB + ForegripOffset fallback via LeftHandInForegrip).
-    -- Do NOT use LeftHandInMaxs alone for this — bone matrices often missing at press time.
+    -- Two-hand foregrip — only when LH is in FG volume AND not in magwell.
+    -- Mag eject already returned above; still re-check so FG never steals mag.
     if self.TwoHanded then
-        local inFG = self.LeftHandInForegrip and self:LeftHandInForegrip(self.ForegripMins, self.ForegripMaxs)
-            or self:LeftHandInMaxs(foregripbone, self.ForegripMins * cv_gripplus:GetFloat(), self.ForegripMaxs * cv_gripplus:GetFloat())
+        local inMag = self.LeftHandInMagazineZone and self:LeftHandInMagazineZone()
+        local gripScale = math.min(cv_gripplus:GetFloat(), 1.35)
+        local inFG = false
+        if not inMag then
+            if self.LeftHandInForegrip then
+                inFG = self:LeftHandInForegrip(self.ForegripMins, self.ForegripMaxs) and true or false
+            end
+            if not inFG and foregripbone then
+                inFG = self:LeftHandInMaxs(
+                    foregripbone,
+                    self.ForegripMins * gripScale,
+                    self.ForegripMaxs * gripScale
+                ) and true or false
+            end
+        end
 
         if cv_gripwithreloadkey:GetBool() then
             gripkey = "boolean_reload"

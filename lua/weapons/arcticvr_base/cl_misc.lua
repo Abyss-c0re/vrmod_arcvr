@@ -96,9 +96,25 @@ function SWEP:GripForegrip()
     end
 end
 
+--- True when LH is in the magazine insert volume (must beat foregrip).
+function SWEP:LeftHandInMagazineZone()
+    local magbone = self.BoneIndices and (self.BoneIndices.mag or self.BoneIndices.magazine)
+    if not magbone then return false end
+    if self.Magazine then
+        local magtbl = ArcticVR and ArcticVR.MagazineTable and ArcticVR.MagazineTable[self.Magazine]
+        if magtbl and magtbl.IsBeltBox then
+            magbone = self.BoneIndices.box or magbone
+        end
+    end
+    local mins = self.MagazineInsertMins or Vector(-3, -8, -3)
+    local maxs = self.MagazineInsertMaxs or Vector(3, 0, 3)
+    return self:LeftHandInMaxs(magbone, mins, maxs) and true or false
+end
+
 --- LH near ForegripOffset in right-hand axes (works when bone matrices missing).
+--- Keep radius tight so mag / pouch / world grabs are not stolen (was 16–18).
 function SWEP:LeftHandNearForegrip(radius)
-    radius = radius or 16
+    radius = radius or 9
     local track = g_VR and g_VR.tracking and g_VR.tracking.pose_lefthand
     local rh = g_VR and g_VR.tracking and g_VR.tracking.pose_righthand
     if not (track and track.pos and rh and rh.pos and rh.ang) then return false end
@@ -107,18 +123,25 @@ function SWEP:LeftHandNearForegrip(radius)
     return track.pos:DistToSqr(fg) <= (radius * radius)
 end
 
---- Foregrip hit-test only: bone OBB first, then world offset. Never used for slide/mag.
+--- Foregrip hit-test only: mag zone never counts; bone OBB first; tight world offset.
 function SWEP:LeftHandInForegrip(mins, maxs)
+    -- Mag grab wins over two-hand grip when hand is at the magwell
+    if self.LeftHandInMagazineZone and self:LeftHandInMagazineZone() then
+        return false
+    end
     local mag = 1
     local cv = GetConVar("arcticvr_grip_magnification")
     if cv then mag = math.max(cv:GetFloat(), 0.25) end
+    -- Cap mag so user can't open a huge FG volume that swallows mag/slide
+    mag = math.min(mag, 1.35)
     mins = mins or self.ForegripMins or Vector(-4, -4, -4)
     maxs = maxs or self.ForegripMaxs or Vector(4, 4, 4)
     local bone = self.BoneIndices and self.BoneIndices.foregrip
     if bone ~= nil and mins and maxs then
         if self:LeftHandInMaxs(bone, mins * mag, maxs * mag) then return true end
     end
-    return self:LeftHandNearForegrip(18)
+    -- Fallback only when close to ForegripOffset (was 18u — conflicted with mag)
+    return self:LeftHandNearForegrip(9)
 end
 
 function SWEP:LeftHandInMaxs(bone, mins, maxs)
