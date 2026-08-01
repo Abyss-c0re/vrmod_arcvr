@@ -32,6 +32,15 @@ if CLIENT then
         if not (wpn.ArcticVR or wpn.ArcticVRNade) then return end
         if not g_VR.active or not g_VR.tracking then return end
         if not isfunction(wpn.VRInput) then return end
+        -- Menu laser focus: left/right triggers are UI clicks (not gun/foregrip)
+        if g_VR.menuFocus and (
+            action == "boolean_primaryfire"
+            or action == "boolean_left_primaryfire"
+            or action == "boolean_secondaryfire"
+            or action == "boolean_left_secondaryfire"
+        ) then
+            return
+        end
         -- Guard: VRInput hits LeftHandInMaxs heavily; never throw into the input hook
         local ok, err = pcall(wpn.VRInput, wpn, action, state)
         if not ok then
