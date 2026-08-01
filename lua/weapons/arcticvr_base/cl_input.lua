@@ -119,9 +119,12 @@ function SWEP:VRInput(action, state)
         end
     end
 
-    -- ArcVR owns its own two-hand foregrip (bone OBB + AVR_GunTracking).
-    -- VRMod stock foregrip skips ArcticVR weapons so the two do not fight.
+    -- Two-hand foregrip (bone OBB + ForegripOffset fallback via LeftHandInForegrip).
+    -- Do NOT use LeftHandInMaxs alone for this — bone matrices often missing at press time.
     if self.TwoHanded then
+        local inFG = self.LeftHandInForegrip and self:LeftHandInForegrip(self.ForegripMins, self.ForegripMaxs)
+            or self:LeftHandInMaxs(foregripbone, self.ForegripMins * cv_gripplus:GetFloat(), self.ForegripMaxs * cv_gripplus:GetFloat())
+
         if cv_gripwithreloadkey:GetBool() then
             gripkey = "boolean_reload"
         else
@@ -134,7 +137,7 @@ function SWEP:VRInput(action, state)
                     self:UngripForegrip()
                     return
                 end
-            elseif self:LeftHandInMaxs(foregripbone, self.ForegripMins * cv_gripplus:GetFloat(), self.ForegripMaxs * cv_gripplus:GetFloat()) then
+            elseif inFG then
                 if action == gripkey and state then
                     self:GripForegrip()
                     return
@@ -145,7 +148,7 @@ function SWEP:VRInput(action, state)
                 if self.ForegripGrabbed then
                     self:UngripForegrip()
                     return
-                elseif self:LeftHandInMaxs(foregripbone, self.ForegripMins * cv_gripplus:GetFloat(), self.ForegripMaxs * cv_gripplus:GetFloat()) then
+                elseif inFG then
                     self:GripForegrip()
                     return
                 end
@@ -155,7 +158,7 @@ function SWEP:VRInput(action, state)
                         self:UngripForegrip()
                         return
                     end
-                elseif self:LeftHandInMaxs(foregripbone, self.ForegripMins * cv_gripplus:GetFloat(), self.ForegripMaxs * cv_gripplus:GetFloat()) then
+                elseif inFG then
                     if action == "boolean_left_pickup" and state then
                         self:GripForegrip()
                         return
