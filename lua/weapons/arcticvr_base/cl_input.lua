@@ -119,7 +119,15 @@ function SWEP:VRInput(action, state)
         end
     end
 
-    if self.TwoHanded then
+    -- Foregrip: VRMod universal module owns grip state + stereo snap; pose still
+    -- runs in AVR_GunTracking when ForegripGrabbed. Call TryForegripGrab *after*
+    -- slide/mag/belt/dust so those keep priority on the same left-grip press.
+    local universalFG = vrmod and vrmod.HasUniversalForegrip and vrmod.HasUniversalForegrip()
+    if self.TwoHanded and universalFG then
+        if action == "boolean_left_pickup" and vrmod.TryForegripGrab then
+            if vrmod.TryForegripGrab(state, { fromArcVR = true }) then return end
+        end
+    elseif self.TwoHanded then
         if cv_gripwithreloadkey:GetBool() then
             gripkey = "boolean_reload"
         else
