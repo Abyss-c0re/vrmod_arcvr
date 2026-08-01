@@ -6,7 +6,15 @@
     "realism"
   ],
   "ignore": [
+    ".git/*",
+    ".git*",
+    ".workshop_id",
     ".gitattributes",
-    "security.md"
+    "security.md",
+    "state/*",
+    "docs/*",
+    "README*",
+    "LICENSE*"
   ]
 }
+
